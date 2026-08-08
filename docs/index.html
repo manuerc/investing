@@ -173,6 +173,7 @@ las reglas y el usado para validarlas. Donde algo no funciona, está dicho.</p>
     <li><a href="#control">Control de survivorship bias</a></li>
     <li><a href="#cripto">Señal A — Cripto</a></li>
     <li><a href="#acciones">Señal B — Acciones</a></li>
+    <li><a href="#regimen">Señal C — Régimen de mercado</a></li>
     <li><a href="#nofunciona">Lo que no funciona</a></li>
     <li><a href="#riesgos">Límites y riesgos</a></li>
     <li><a href="#repro">Reproducir los números</a></li>
@@ -181,8 +182,9 @@ las reglas y el usado para validarlas. Donde algo no funciona, está dicho.</p>
 
 <h2 id="resumen">1 · Resumen: qué se opera</h2>
 
-<p>El sistema emite dos señales independientes. Son distintas en naturaleza porque los dos
-mercados se comportan de forma opuesta, y eso no es una opinión: sale del screening.</p>
+<p>El sistema emite tres señales independientes. Las dos primeras son opuestas entre sí porque
+los dos mercados se comportan al revés uno del otro, y eso no es una opinión: sale del
+screening. La tercera no dice qué comprar, sino en qué clima estamos.</p>
 
 <div class="sig">
   <div class="sig-h">Señal A · Cripto — momentum</div>
@@ -203,6 +205,17 @@ mercados se comportan de forma opuesta, y eso no es una opinión: sale del scree
     <div class="kpi"><div class="kpi-l">P(sube) 5 cond.</div><div class="kpi-v">63,9%</div><div class="kpi-d">base 55,7% · 10 ruedas</div></div>
     <div class="kpi"><div class="kpi-l">P(sube) 6 cond.</div><div class="kpi-v">67,9%</div><div class="kpi-d">base 55,7%</div></div>
     <div class="kpi"><div class="kpi-l">Edge por operación</div><div class="kpi-v">+1,1 pp</div><div class="kpi-d">salida a 21 ruedas</div></div>
+  </div>
+</div>
+
+<div class="sig">
+  <div class="sig-h">Señal C · Régimen — defensa</div>
+  <p style="margin-bottom:8px">El S&P 500 contra su promedio de 200 días. <b>No genera
+  retorno</b>: reduce las caídas. Es la alerta que menos aparece y la más importante.</p>
+  <div class="kpis" style="margin:0">
+    <div class="kpi"><div class="kpi-l">Peor caída OOS</div><div class="kpi-v pos">−22,3%</div><div class="kpi-d">vs −39,5% sin filtro</div></div>
+    <div class="kpi"><div class="kpi-l">Costo en Sharpe</div><div class="kpi-v neg">1,07</div><div class="kpi-d">vs 1,16 sin filtro</div></div>
+    <div class="kpi"><div class="kpi-l">Avisos por año</div><div class="kpi-v">6,5</div><div class="kpi-d">0 en años calmos, 19 en 2022</div></div>
   </div>
 </div>
 
@@ -419,7 +432,64 @@ necesita aire.</p>
   <div class="kpi"><div class="kpi-l">Activos positivos</div><div class="kpi-v">14/15</div><div class="kpi-d">único negativo: IRSA</div></div>
 </div>
 
-<h2 id="nofunciona">7 · Lo que no funciona</h2>
+<h2 id="regimen">7 · Señal C — Régimen de mercado</h2>
+
+<p>Las dos señales anteriores dicen <i>qué</i> comprar y <i>cuándo</i>. Esta dice algo
+distinto: <b>en qué clima estamos</b>. Es la alerta que menos aparece y la más importante.</p>
+
+<pre><code>RISK_ON   el S&P 500 cierra por encima de su EMA200
+RISK_OFF  la pierde</code></pre>
+
+<p>Lo primero que hay que entender es que <b>no genera retorno</b>. Aplicando el filtro sobre
+el watchlist —estar comprado solo en RISK_ON— pasa esto:</p>
+
+<table>
+  <thead><tr><th>Período</th><th class="n">CAGR</th><th class="n">Sharpe</th><th class="n">Peor caída</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Sin filtro · IS</td><td class="n">16,9%</td><td class="n">0,94</td><td class="n">−26,7%</td></tr>
+    <tr><td class="k">Con filtro · IS</td><td class="n">13,9%</td><td class="n">0,89</td><td class="n">−26,6%</td></tr>
+    <tr><td class="k">Sin filtro · OOS</td><td class="n">29,8%</td><td class="n">1,16</td><td class="n">−39,5%</td></tr>
+    <tr class="hi"><td class="k">Con filtro · OOS</td><td class="n">18,9%</td><td class="n">1,07</td><td class="n"><b>−22,3%</b></td></tr>
+  </tbody>
+</table>
+
+<p>Cuesta retorno y cuesta algo de Sharpe. Lo que compra es <b>dormir</b>: el peor drawdown
+out-of-sample baja de −39,5% a −22,3%, casi la mitad. Es una decisión de tolerancia al
+riesgo, no una fuente de rendimiento — y por eso el sistema la informa en lugar de imponerla.</p>
+
+<h3>El whipsaw es el precio, no un defecto</h3>
+
+<p>El cruce de la EMA200 se da <b>6,5 veces por año en promedio</b>, pero muy desparejo:
+<b>0 veces</b> en años de tendencia clara como 2013, 2017, 2021 y 2024, y <b>19 veces</b> en
+2022 y otras 19 en 2023. Justo en los años difíciles el aviso se vuelve ruidoso.</p>
+
+<p>La reacción natural es suavizarlo. Se probaron cuatro formas, y <b>todas empeoran la
+protección</b>, que es lo único que la señal aporta:</p>
+
+<table>
+  <thead><tr><th>Regla</th><th class="n">Avisos/año</th><th class="n">Peor año</th><th class="n">Max DD · IS</th><th class="n">Max DD · OOS</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td class="k">Cruce crudo <i>(la elegida)</i></td><td class="n">6,5</td><td class="n">19</td><td class="n"><b>−26,6%</b></td><td class="n"><b>−22,3%</b></td></tr>
+    <tr><td class="k">Banda de ±2%</td><td class="n">2,2</td><td class="n">7</td><td class="n">−36,8%</td><td class="n">−20,1%</td></tr>
+    <tr><td class="k">Confirmar 3 cierres</td><td class="n">2,7</td><td class="n">9</td><td class="n">−30,3%</td><td class="n">−23,5%</td></tr>
+    <tr><td class="k">Confirmar 5 cierres</td><td class="n">1,9</td><td class="n">6</td><td class="n">−39,0%</td><td class="n">−23,5%</td></tr>
+  </tbody>
+</table>
+
+<p>La banda de ±2% baja los avisos de 6,5 a 2,2 por año, pero lleva el peor drawdown
+in-sample de −26,6% a −36,8%: te deja adentro un 2% más de caída antes de avisar. Esperar
+5 cierres confirmados es todavía peor, −39,0%.</p>
+
+<p class="note"><b>La decisión.</b> Se dejó el cruce crudo y el ruido se convierte en
+contexto: cada alerta dice <b>de qué número de cambio del año se trata</b>, y a partir del
+cuarto agrega una advertencia explícita de que el mercado está lateral. Un aviso que dice
+«cambio n.º 7 del año» se lee muy distinto a uno que dice «cambio n.º 1», y esa información
+es más útil que un filtro que suaviza el gráfico y llega tarde a la caída.</p>
+
+<p>El régimen también entra como una de las seis condiciones de la señal de acciones
+—«SPY castigado»— pero ahí se usa el percentil, no el cruce.</p>
+
+<h2 id="nofunciona">8 · Lo que no funciona</h2>
 
 <p>Documentado con el mismo detalle que lo que sí funciona, para no volver a probarlo.</p>
 
@@ -441,7 +511,7 @@ cumplido o ruptura de tendencia de fondo — no por indicador de momentum. El ú
 señal real es <code>RSI(2) &gt; 95 con precio &lt; EMA200</code>, que es fadear un rebote en
 tendencia bajista: otro animal, no aplica a cerrar una posición ganadora.</p>
 
-<h2 id="riesgos">8 · Límites y riesgos</h2>
+<h2 id="riesgos">9 · Límites y riesgos</h2>
 
 <ul>
   <li><b>Cola izquierda gruesa en acciones.</b> Gana seguido pero cuando pierde, pierde grande:
@@ -462,7 +532,7 @@ tendencia bajista: otro animal, no aplica a cerrar una posición ganadora.</p>
   con dinero propio.</li>
 </ul>
 
-<h2 id="repro">9 · Reproducir los números</h2>
+<h2 id="repro">10 · Reproducir los números</h2>
 
 <p>Cada tabla de esta página sale de un script del repo. Todos escriben su salida en
 <code>out/</code>.</p>
