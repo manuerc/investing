@@ -38,6 +38,12 @@ CREATE TABLE IF NOT EXISTS regime_state (
     proxy TEXT PRIMARY KEY, state TEXT NOT NULL,
     bar_date TEXT NOT NULL, updated_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS crypto_weight_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    asset TEXT NOT NULL, weight REAL NOT NULL,
+    bar_date TEXT NOT NULL, recorded_at TEXT NOT NULL,
+    UNIQUE(asset, bar_date)
+);
 CREATE TABLE IF NOT EXISTS regime_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     proxy TEXT NOT NULL, state TEXT NOT NULL,
@@ -148,6 +154,10 @@ def get_crypto_weights(con) -> dict[str, float]:
 
 
 def set_crypto_weight(con, asset: str, weight: float, bar_date: str) -> None:
+    # History, not just current value: the tracker reconstructs the daily weight
+    # series from these steps to build the paper portfolio.
+    con.execute("INSERT OR IGNORE INTO crypto_weight_history(asset,weight,bar_date,recorded_at)"
+                " VALUES (?,?,?,?)", (asset, weight, bar_date, _now()))
     con.execute(
         "INSERT INTO crypto_weights(asset,weight,bar_date,updated_at) VALUES (?,?,?,?)"
         " ON CONFLICT(asset) DO UPDATE SET weight=excluded.weight,"
@@ -198,8 +208,8 @@ def log_run(con, dry: bool, n_eq: int, n_cr: int, n_ex: int, regime: bool) -> No
 # public, diffable record of every signal the bot ever sent.
 
 SNAPSHOT = Path(__file__).resolve().parent.parent / "state" / "state.json"
-TABLES = ("equity_signals", "positions", "crypto_weights", "regime_state",
-          "regime_history", "runs")
+TABLES = ("equity_signals", "positions", "crypto_weights", "crypto_weight_history",
+          "regime_state", "regime_history", "runs")
 
 
 def export_json(con, path: Path = SNAPSHOT) -> Path:

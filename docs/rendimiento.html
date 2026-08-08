@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rendimiento en vivo · Señales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --page:#f6f6f4; --surface-1:#fcfcfb; --surface-2:#f0f0ed;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#84837c;
+  --border:#e2e1dc; --border-strong:#cfcec7;
+  --series-1:#2a78d6; --series-2:#eb6834;
+  --good:#1baf7a; --bad:#e34948; --warn:#eda100; --accent:#2a78d6;
+  --radius:10px; --radius-lg:14px;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#131312; --surface-1:#1a1a19; --surface-2:#232322;
+  --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#8f8e85;
+  --border:#2e2e2c; --border-strong:#3d3d3a;
+  --series-1:#3987e5; --series-2:#d95926;
+  --good:#199e70; --bad:#e66767; --warn:#c98500; --accent:#3987e5;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --page:#131312; --surface-1:#1a1a19; --surface-2:#232322;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#8f8e85;
+    --border:#2e2e2c; --border-strong:#3d3d3a;
+    --series-1:#3987e5; --series-2:#d95926;
+    --good:#199e70; --bad:#e66767; --warn:#c98500; --accent:#3987e5;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text-primary);
+  font:400 15px/1.65 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:920px;margin:0 auto;padding:0 24px 100px}
+header.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--page) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.top-in{max-width:920px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:14px}
+.brand{font-weight:650;font-size:14px;letter-spacing:-.01em}
+.brand span{color:var(--text-muted);font-weight:400}
+.spacer{flex:1}
+.tbtn{border:1px solid var(--border);background:var(--surface-1);color:var(--text-secondary);
+  border-radius:8px;padding:6px 11px;font:500 12.5px Inter,sans-serif;cursor:pointer;text-decoration:none}
+.tbtn:hover{border-color:var(--border-strong);color:var(--text-primary)}
+h1{font-size:31px;line-height:1.2;letter-spacing:-.025em;margin:44px 0 10px;font-weight:700}
+h2{font-size:20px;letter-spacing:-.018em;margin:48px 0 14px;font-weight:650;
+  padding-top:20px;border-top:1px solid var(--border)}
+h3{font-size:15px;margin:26px 0 10px;font-weight:600}
+p{margin:0 0 14px;color:var(--text-secondary)}
+p strong{color:var(--text-primary);font-weight:600}
+.lede{font-size:16.5px;margin-bottom:24px}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface-2);
+  border:1px solid var(--border);border-radius:5px;padding:1.5px 5px;color:var(--text-primary)}
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px 22px;margin:0 0 20px}
+.card-t{font:650 14px Inter,sans-serif;margin:0 0 4px}
+.card-s{font-size:13px;color:var(--text-muted);margin:0 0 16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:1px;
+  background:var(--border);border:1px solid var(--border);border-radius:var(--radius-lg);
+  overflow:hidden;margin:0 0 18px}
+.kpi{background:var(--surface-1);padding:14px 16px}
+.kpi-l{font:500 11px Inter,sans-serif;color:var(--text-muted);text-transform:uppercase;
+  letter-spacing:.055em;margin-bottom:6px}
+.kpi-v{font:650 24px/1.1 Inter,sans-serif;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.kpi-d{font-size:11.5px;color:var(--text-muted);margin-top:4px}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:0 0 18px}
+th{text-align:left;font:600 11px Inter,sans-serif;color:var(--text-muted);text-transform:uppercase;
+  letter-spacing:.05em;padding:0 10px 8px;border-bottom:1px solid var(--border-strong)}
+td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text-secondary);
+  font-variant-numeric:tabular-nums}
+td:first-child,th:first-child{padding-left:0}
+td:last-child,th:last-child{padding-right:0}
+td.k{color:var(--text-primary);font-weight:500}
+th.n,td.n{text-align:right}
+.note{border-left:2px solid var(--border-strong);padding:2px 0 2px 16px;margin:0 0 18px;
+  color:var(--text-muted);font-size:13.5px}
+.note.warn{border-left-color:var(--warn)}
+.note b{color:var(--text-secondary)}
+.badge{display:inline-flex;align-items:center;gap:6px;font:600 12px Inter,sans-serif;
+  border-radius:100px;padding:4px 12px;border:1px solid}
+.badge.ok{color:var(--good);border-color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent)}
+.badge.vigilar{color:var(--warn);border-color:var(--warn);background:color-mix(in srgb,var(--warn) 10%,transparent)}
+.badge.alerta{color:var(--bad);border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent)}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin:0 0 10px}
+.lg{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-secondary)}
+.sw{width:11px;height:11px;border-radius:3px;flex:none}
+.chart{width:100%;overflow:visible;display:block}
+.chart text{font-family:Inter,system-ui,sans-serif}
+.gl{stroke:var(--border);stroke-width:1}
+.axl{fill:var(--text-muted);font-size:11px}
+.dlab{font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.tip{position:fixed;z-index:80;pointer-events:none;opacity:0;transition:opacity .1s;
+  background:var(--surface-1);border:1px solid var(--border-strong);border-radius:8px;
+  padding:9px 11px;font-size:12.5px;box-shadow:0 6px 20px rgba(0,0,0,.14)}
+.tip.on{opacity:1}
+.tip-t{font-weight:650;color:var(--text-primary);margin-bottom:5px}
+.tip-r{display:flex;justify-content:space-between;gap:16px;color:var(--text-secondary)}
+.tip-r b{color:var(--text-primary);font-variant-numeric:tabular-nums}
+details{margin:0 0 18px}
+summary{cursor:pointer;font:500 13px Inter,sans-serif;color:var(--text-muted);padding:7px 0;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary:before{content:"▸ ";}
+details[open] summary:before{content:"▾ ";}
+summary:hover{color:var(--text-primary)}
+.empty{color:var(--text-muted);font-size:14px;padding:20px 0}
+footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--border);
+  font-size:12.5px;color:var(--text-muted)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">Rendimiento en vivo <span>· desde el arranque</span></div>
+    <div class="spacer"></div>
+    <a class="tbtn" href="./">← El modelo</a>
+    <button class="tbtn" id="themeBtn">Tema</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+<h1>Rendimiento de cada canal</h1>
+<p class="lede">Qué hubiera pasado siguiendo cada canal desde que empezó a publicar.
+Se recalcula todos los días a partir del registro de lo que el bot dijo y cuándo.</p>
+
+<div class="note warn">
+  <b>Leé esto antes que cualquier número.</b> Detectar estadísticamente el edge de la señal
+  de acciones exige unas <b>685 operaciones: 34 años</b> a 20 por año. Sobre la tasa de
+  acierto, 195 años. Esta página <b>no puede validar la estrategia y nunca va a poder</b> —
+  quien te muestre un dashboard de tres meses como prueba de que un sistema funciona, te está
+  vendiendo algo.<br><br>
+  Lo que sí hace: detectar si el sistema <b>dejó de comportarse como el backtest</b>. Por eso
+  cada resultado se compara contra la distribución del backtest —remuestreada 20.000 veces—
+  y no contra cero. Con 20 operaciones ya se detecta una caída del retorno medio por debajo
+  de −1,5%.
+</div>
+
+<div id="app"><p class="empty">Cargando…</p></div>
+
+<footer>
+  Datos de Yahoo Finance vía <code>yfinance</code> · el registro de señales está versionado en
+  <code>state/state.json</code> · proyecto personal de investigación, sin asesoramiento financiero.
+  <span id="gen"></span>
+</footer>
+
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(function(){
+  const root=document.documentElement, btn=document.getElementById('themeBtn');
+  const saved=localStorage.getItem('theme'); if(saved) root.setAttribute('data-theme',saved);
+  btn.onclick=()=>{
+    const cur=root.getAttribute('data-theme')
+      ||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+    const next=cur==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next); localStorage.setItem('theme',next); render();
+  };
+
+  const tip=document.getElementById('tip');
+  function showTip(e,title,rows){
+    tip.innerHTML='<div class="tip-t">'+title+'</div>'+rows.map(r=>
+      '<div class="tip-r"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>').join('');
+    tip.classList.add('on');
+    let x=e.clientX+14,y=e.clientY-tip.offsetHeight-10;
+    if(x+tip.offsetWidth>innerWidth-8) x=e.clientX-tip.offsetWidth-14;
+    if(y<8) y=e.clientY+16;
+    tip.style.left=x+'px'; tip.style.top=y+'px';
+  }
+  const hideTip=()=>tip.classList.remove('on');
+  addEventListener('scroll',hideTip,{passive:true});
+
+  const pct=(v,d=1)=>(v==null?'—':(v*100).toFixed(d).replace('.',',')+'%');
+  const sgn=v=>v==null?'':(v>0?'pos':(v<0?'neg':''));
+  const NS='http://www.w3.org/2000/svg';
+  const el=(n,a)=>{const s=document.createElementNS(NS,n);for(const k in a)s.setAttribute(k,a[k]);return s};
+  const cs=()=>getComputedStyle(document.body);
+
+  // ---- line chart, two series ----
+  function lineChart(svg, serie, labelA, labelB){
+    svg.innerHTML='';
+    const W=660,H=250,mL=48,mR=58,mT=16,mB=32;
+    const iw=W-mL-mR, ih=H-mT-mB;
+    const xs=serie.map((_,i)=>i);
+    const all=serie.flatMap(p=>[p.a,p.b]);
+    let lo=Math.min(...all,0), hi=Math.max(...all,0);
+    const pad=(hi-lo)*0.12||0.02; lo-=pad; hi+=pad;
+    const X=i=>mL+(serie.length<2?iw/2:i/(serie.length-1)*iw);
+    const Y=v=>mT+ih-(v-lo)/(hi-lo)*ih;
+    const c1=cs().getPropertyValue('--series-1').trim();
+    const c2=cs().getPropertyValue('--series-2').trim();
+
+    const steps=5;
+    for(let k=0;k<=steps;k++){
+      const v=lo+(hi-lo)*k/steps;
+      svg.appendChild(el('line',{x1:mL,x2:mL+iw,y1:Y(v),y2:Y(v),class:'gl'}));
+      const t=el('text',{x:mL-9,y:Y(v)+4,class:'axl','text-anchor':'end'});
+      t.textContent=pct(v,0); svg.appendChild(t);
+    }
+    if(lo<0&&hi>0){
+      svg.appendChild(el('line',{x1:mL,x2:mL+iw,y1:Y(0),y2:Y(0),
+        stroke:cs().getPropertyValue('--border-strong').trim(),'stroke-width':1.5}));
+    }
+    const path=k=>serie.map((p,i)=>(i?'L':'M')+X(i)+','+Y(p[k])).join(' ');
+    svg.appendChild(el('path',{d:path('b'),fill:'none',stroke:c2,'stroke-width':2,
+      'stroke-linejoin':'round'}));
+    svg.appendChild(el('path',{d:path('a'),fill:'none',stroke:c1,'stroke-width':2,
+      'stroke-linejoin':'round'}));
+
+    const last=serie[serie.length-1];
+    [['a',c1,last.a],['b',c2,last.b]].forEach(([k,c,v])=>{
+      svg.appendChild(el('circle',{cx:X(serie.length-1),cy:Y(v),r:3.5,fill:c,
+        stroke:cs().getPropertyValue('--surface-1').trim(),'stroke-width':2}));
+      const t=el('text',{x:X(serie.length-1)+9,y:Y(v)+4,class:'dlab',fill:c});
+      t.textContent=pct(v); svg.appendChild(t);
+    });
+
+    [0,Math.floor(serie.length/2),serie.length-1].forEach(i=>{
+      if(i<0||i>=serie.length) return;
+      const t=el('text',{x:X(i),y:H-8,class:'axl','text-anchor':i===0?'start':(i===serie.length-1?'end':'middle')});
+      t.textContent=serie[i].d.slice(5); svg.appendChild(t);
+    });
+
+    const cross=el('line',{x1:0,x2:0,y1:mT,y2:mT+ih,stroke:cs().getPropertyValue('--border-strong').trim(),
+      'stroke-width':1,opacity:0});
+    svg.appendChild(cross);
+    const hit=el('rect',{x:mL,y:mT,width:iw,height:ih,fill:'transparent'});
+    hit.addEventListener('mousemove',ev=>{
+      const r=svg.getBoundingClientRect();
+      const px=(ev.clientX-r.left)/r.width*W;
+      const i=Math.max(0,Math.min(serie.length-1,Math.round((px-mL)/iw*(serie.length-1))));
+      cross.setAttribute('x1',X(i)); cross.setAttribute('x2',X(i)); cross.setAttribute('opacity',1);
+      showTip(ev,serie[i].d,[[labelA,pct(serie[i].a)],[labelB,pct(serie[i].b)]]);
+    });
+    hit.addEventListener('mouseleave',()=>{cross.setAttribute('opacity',0);hideTip()});
+    svg.appendChild(hit);
+  }
+
+  // ---- bootstrap band with the live marker ----
+  function bandChart(svg, b, live){
+    svg.innerHTML='';
+    const W=660,H=132,mL=16,mR=16,mT=34,mB=42;
+    const iw=W-mL-mR;
+    let lo=Math.min(b.p5,live,0), hi=Math.max(b.p95,live,0);
+    const pad=(hi-lo)*0.1||0.01; lo-=pad; hi+=pad;
+    const X=v=>mL+(v-lo)/(hi-lo)*iw;
+    const c1=cs().getPropertyValue('--series-1').trim();
+    const mut=cs().getPropertyValue('--text-muted').trim();
+    const bd=cs().getPropertyValue('--border').trim();
+    const y=mT+22;
+
+    svg.appendChild(el('rect',{x:X(b.p5),y:y-13,width:X(b.p95)-X(b.p5),height:26,rx:4,
+      fill:bd}));
+    svg.appendChild(el('rect',{x:X(b.p25),y:y-13,width:X(b.p75)-X(b.p25),height:26,rx:4,
+      fill:cs().getPropertyValue('--border-strong').trim()}));
+    svg.appendChild(el('line',{x1:X(b.p50),x2:X(b.p50),y1:y-15,y2:y+15,stroke:mut,'stroke-width':2}));
+
+    svg.appendChild(el('line',{x1:X(live),x2:X(live),y1:y-21,y2:y+21,stroke:c1,'stroke-width':3}));
+    const lt=el('text',{x:X(live),y:y-27,class:'dlab',fill:c1,'text-anchor':'middle'});
+    lt.textContent='en vivo '+pct(live); svg.appendChild(lt);
+
+    [['p5',b.p5],['mediana',b.p50],['p95',b.p95]].forEach(([n,v])=>{
+      const t=el('text',{x:X(v),y:y+34,class:'axl','text-anchor':'middle'});
+      t.textContent=n+' '+pct(v); svg.appendChild(t);
+    });
+    const hit=el('rect',{x:mL,y:mT-10,width:iw,height:70,fill:'transparent'});
+    hit.addEventListener('mousemove',ev=>showTip(ev,'Banda esperada del backtest',
+      [['p5',pct(b.p5)],['p25',pct(b.p25)],['mediana',pct(b.p50)],['p75',pct(b.p75)],
+       ['p95',pct(b.p95)],['en vivo',pct(live)]]));
+    hit.addEventListener('mouseleave',hideTip);
+    svg.appendChild(hit);
+  }
+
+  let DATA=null;
+  function render(){
+    if(!DATA) return;
+    const a=DATA.acciones,c=DATA.cripto,r=DATA.regimen;
+    const app=document.getElementById('app');
+    let h='';
+
+    // ---------- acciones ----------
+    h+='<h2>📈 #acciones</h2>';
+    if(!a.n_cerradas){
+      h+='<p class="empty">Todavía no se cerró ninguna operación. '+
+         (a.n_abiertas?('Hay <b>'+a.n_abiertas+'</b> abierta(s); cada una cierra a las 21 ruedas.')
+                      :'Cuando salga la primera señal aparece acá.')+'</p>';
+    } else {
+      h+='<div class="kpis">'
+       +kpi('Operaciones',a.n_cerradas+(a.n_abiertas?' + '+a.n_abiertas+' abiertas':''),'cerradas')
+       +kpi('Acierto',pct(a.acierto),'backtest '+pct(a.backtest?.acierto))
+       +kpi('Retorno medio',pct(a.ret_medio,2),'backtest '+pct(a.backtest?.ret_medio,2),sgn(a.ret_medio))
+       +kpi('Cartera',pct(a.cartera_pct,2),'10% del capital por operación',sgn(a.cartera_pct))
+       +'</div>';
+      if(a.drift){
+        h+='<p><span class="badge '+a.drift.estado+'">'+
+           (a.drift.estado==='ok'?'✓':'⚠')+' '+a.drift.detalle+'</span> '+
+           '<span style="color:var(--text-muted);font-size:13px"> — el resultado cae en el '+
+           'percentil '+Math.round(a.drift.percentil*100)+' de lo que predice el backtest</span></p>';
+      }
+      if(a.bandas){
+        h+='<div class="card"><div class="card-t">El resultado contra lo que el backtest predice</div>'
+         +'<div class="card-s">20.000 carteras simuladas de '+a.n_cerradas+' operaciones, '
+         +'remuestreando el backtest</div><svg id="cBand" class="chart" viewBox="0 0 660 132" '
+         +'role="img" aria-label="Resultado en vivo dentro de la banda esperada"></svg></div>';
+      }
+      h+='<details><summary>Ver las '+(a.operaciones||[]).length+' operaciones</summary><table>'
+       +'<thead><tr><th>Activo</th><th>Señal</th><th class="n">Entrada</th>'
+       +'<th class="n">Salida</th><th class="n">Resultado</th><th>Estado</th></tr></thead><tbody>'
+       +(a.operaciones||[]).slice().reverse().map(t=>'<tr><td class="k">'+t.asset+'</td>'
+         +'<td>'+t.signal_date+'</td><td class="n">'+(t.entry?.toFixed(2)??'—')+'</td>'
+         +'<td class="n">'+(t.exit?.toFixed(2)??'—')+'</td>'
+         +'<td class="n '+sgn(t.ret)+'">'+pct(t.ret,2)+'</td><td>'+t.estado+'</td></tr>').join('')
+       +'</tbody></table></details>';
+    }
+
+    // ---------- cripto ----------
+    h+='<h2>🔼 #cripto</h2>';
+    if(!c.serie){
+      h+='<p class="empty">Sin historial de pesos todavía.</p>';
+    } else {
+      const dif=c.tilt_pct-c.hold_pct;
+      h+='<div class="kpis">'
+       +kpi('Siguiendo el canal',pct(c.tilt_pct,2),'desde '+c.desde,sgn(c.tilt_pct))
+       +kpi('Comprar y mantener',pct(c.hold_pct,2),'misma canasta, peso fijo',sgn(c.hold_pct))
+       +kpi('Diferencia',pct(dif,2),'lo que aportó el tilt',sgn(dif))
+       +kpi('Peor caída',pct(c.tilt_maxdd,1),'vs '+pct(c.hold_maxdd,1)+' manteniendo')
+       +'</div>'
+       +'<div class="card"><div class="card-t">Retorno acumulado</div>'
+       +'<div class="card-s">Canasta de BTC, ETH y BNB en partes iguales</div>'
+       +'<div class="legend"><div class="lg"><span class="sw" style="background:var(--series-1)"></span>'
+       +'Siguiendo el canal</div><div class="lg"><span class="sw" style="background:var(--series-2)">'
+       +'</span>Comprar y mantener</div></div>'
+       +'<svg id="cCry" class="chart" viewBox="0 0 660 250" role="img" '
+       +'aria-label="Retorno acumulado del tilt de cripto contra comprar y mantener"></svg></div>';
+    }
+
+    // ---------- régimen ----------
+    h+='<h2>🟩 #regimen</h2>';
+    if(!r.serie){
+      h+='<p class="empty">Sin cambios de régimen registrados todavía.</p>';
+    } else {
+      const dif=r.filtrado_pct-r.spy_pct;
+      h+='<div class="kpis">'
+       +kpi('Siguiendo el canal',pct(r.filtrado_pct,2),'fuera del mercado en RISK_OFF',sgn(r.filtrado_pct))
+       +kpi('SPY sin filtro',pct(r.spy_pct,2),'comprar y mantener',sgn(r.spy_pct))
+       +kpi('Peor caída',pct(r.filtrado_maxdd,1),'vs '+pct(r.spy_maxdd,1)+' sin filtro')
+       +kpi('Tiempo invertido',pct(r.expuesto,0),r.n_cambios+' cambios · hoy '+r.estado_actual)
+       +'</div>'
+       +'<p class="note">El régimen <b>no busca ganarle al SPY</b>: busca que la caída sea menor. '
+       +'Si el retorno es más bajo pero la peor caída también, está haciendo su trabajo.</p>'
+       +'<div class="card"><div class="card-t">Retorno acumulado</div>'
+       +'<div class="card-s">SPY, comprado solo mientras el régimen está en RISK_ON</div>'
+       +'<div class="legend"><div class="lg"><span class="sw" style="background:var(--series-1)"></span>'
+       +'Siguiendo el canal</div><div class="lg"><span class="sw" style="background:var(--series-2)">'
+       +'</span>SPY sin filtro</div></div>'
+       +'<svg id="cReg" class="chart" viewBox="0 0 660 250" role="img" '
+       +'aria-label="Retorno acumulado del filtro de régimen contra el SPY"></svg></div>';
+    }
+
+    app.innerHTML=h;
+    if(a.bandas) bandChart(document.getElementById('cBand'),a.bandas,a.cartera_pct);
+    if(c.serie) lineChart(document.getElementById('cCry'),c.serie,'Siguiendo el canal','Comprar y mantener');
+    if(r.serie) lineChart(document.getElementById('cReg'),r.serie,'Siguiendo el canal','SPY sin filtro');
+    document.getElementById('gen').textContent=' · actualizado '+(DATA.generado||'').slice(0,16).replace('T',' ')+' UTC';
+  }
+
+  function kpi(l,v,d,cls){
+    return '<div class="kpi"><div class="kpi-l">'+l+'</div>'
+      +'<div class="kpi-v '+(cls||'')+'">'+v+'</div>'
+      +'<div class="kpi-d">'+(d||'')+'</div></div>';
+  }
+
+  fetch('data/performance.json?cb='+Date.now())
+    .then(r=>r.ok?r.json():Promise.reject(r.status))
+    .then(d=>{DATA=d;render();})
+    .catch(()=>{document.getElementById('app').innerHTML=
+      '<p class="empty">Todavía no hay datos de rendimiento. Se generan con la primera '+
+      'corrida del job diario.</p>';});
+  addEventListener('resize',render);
+})();
+</script>
+</body>
+</html>

@@ -25,6 +25,7 @@ from pathlib import Path
 import yaml
 
 from bot import post_welcome
+from bot.notifier import load_env
 
 API = "https://discord.com/api/v10"
 ROOT = Path(__file__).resolve().parent.parent
@@ -63,6 +64,10 @@ STRUCTURE = [
         ("cripto", "Ajustes de peso en BTC, ETH y BNB."),
         ("reporte", "Resumen semanal de cómo viene funcionando el sistema en la vida real."),
     ]),
+    ("📈 RENDIMIENTO", True, [
+        ("scorecard", "Resumen semanal de cómo viene funcionando cada canal en la vida real."),
+        ("alertas-modelo", "Solo habla cuando un resultado se sale de lo que predice el backtest."),
+    ]),
     ("💬 COMUNIDAD", False, [
         ("charla", "Conversación general."),
         ("preguntas", "Dudas sobre las señales o el modelo."),
@@ -71,7 +76,9 @@ STRUCTURE = [
 ]
 
 WEBHOOK_CHANNELS = {"acciones": "DISCORD_WEBHOOK_ACCIONES", "cripto": "DISCORD_WEBHOOK_CRIPTO",
-                    "regimen": "DISCORD_WEBHOOK_REGIMEN", "reporte": "DISCORD_WEBHOOK_REPORTE"}
+                    "regimen": "DISCORD_WEBHOOK_REGIMEN", "reporte": "DISCORD_WEBHOOK_REPORTE",
+                    "scorecard": "DISCORD_WEBHOOK_SCORECARD",
+                    "alertas-modelo": "DISCORD_WEBHOOK_DRIFT"}
 
 # NOT "señales": Discord auto-creates a managed role named after the bot when
 # it is invited, and managed roles cannot be assigned to humans. A separate,
@@ -138,18 +145,6 @@ class Discord:
 
 
 # --------------------------------------------------------------------------- helpers
-
-def load_env() -> None:
-    env = ROOT / ".env"
-    if not env.exists():
-        return
-    for line in env.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, v = line.split("=", 1)
-        os.environ.setdefault(k.strip(), v.strip())
-
 
 def resolve_guild(dc: Discord, given: str | None) -> tuple[str, str]:
     guilds = dc.get("/users/@me/guilds")

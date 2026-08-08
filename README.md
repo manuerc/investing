@@ -6,6 +6,8 @@ el usado para validarla. Lo que no funciona también está documentado.
 
 **📖 [Cómo funciona el modelo](https://manuerc.github.io/investing/)** — la explicación
 completa, con los números y la metodología.
+**📊 [Rendimiento en vivo](https://manuerc.github.io/investing/rendimiento.html)** — qué
+hubiera pasado siguiendo cada canal, actualizado a diario.
 
 ---
 
@@ -118,6 +120,7 @@ python3 run_crypto.py
 
 ```
 bot/            job diario: motor, estado, notificaciones a Discord
+tracker/        rendimiento en vivo de cada canal, contra la banda del backtest
 signals/        indicadores, features, backtest — compartido por research y bot
 docs/           la documentación del modelo (GitHub Pages sirve esta carpeta)
 state/          memoria del bot entre corridas, en JSON versionado
@@ -126,6 +129,17 @@ run_*.py        scripts de investigación
 ```
 
 ---
+
+## Sobre el seguimiento en vivo
+
+El dashboard **no puede validar la estrategia y nunca va a poder**. Detectar el edge de
++1,1 pp con un desvío de 10,4 pp por operación exige ~685 operaciones: **34 años** a 20 por
+año. Sobre la tasa de acierto son 195 años.
+
+Lo que sí hace es detectar que el sistema **dejó de comportarse como el backtest**. Cada
+resultado se contrasta contra la distribución del backtest remuestreada 20.000 veces, no
+contra cero — con 20 operaciones ya se detecta una caída del retorno medio por debajo de
+−1,5%. El canal `#alertas-modelo` solo habla cuando el resultado sale de esa banda.
 
 ## Límites
 

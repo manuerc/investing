@@ -12,13 +12,34 @@ import json
 import os
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 CHANNELS = {
     "acciones": "DISCORD_WEBHOOK_ACCIONES",
     "cripto": "DISCORD_WEBHOOK_CRIPTO",
     "regimen": "DISCORD_WEBHOOK_REGIMEN",
     "reporte": "DISCORD_WEBHOOK_REPORTE",
+    "scorecard": "DISCORD_WEBHOOK_SCORECARD",
+    "alertas-modelo": "DISCORD_WEBHOOK_DRIFT",
 }
+
+def load_env(path: Path | None = None) -> None:
+    """Read .env into the environment for local runs.
+
+    In GitHub Actions the webhooks arrive as real env vars, so this is a no-op
+    there. Existing variables always win over the file.
+    """
+    env = path or Path(__file__).resolve().parent.parent / ".env"
+    if not env.exists():
+        return
+    for line in env.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        if v.strip():
+            os.environ.setdefault(k.strip(), v.strip())
+
 
 COLOR = {"buy": 0x1BAF7A, "exit": 0x2A78D6, "up": 0x1BAF7A,
          "down": 0xEDA100, "risk_off": 0xE34948, "risk_on": 0x1BAF7A,
@@ -163,16 +184,25 @@ def _render(channel: str, embed: dict) -> None:
     print("└" + "─" * 78)
 
 
+MUTED = False   # set by --no-send: persist state but never hit Discord
+
+
 def send(channel: str, embed: dict, dry_run: bool = False) -> bool:
     url = os.environ.get(CHANNELS.get(channel, ""), "")
+    if MUTED:
+        return True
     if dry_run or not url:
         _render(channel, embed)
         if not dry_run and not url:
             print(f"[NOTIFY] {CHANNELS.get(channel)} no está seteado — solo consola")
         return True
     payload = json.dumps({"embeds": [embed]}).encode()
-    req = urllib.request.Request(url, data=payload,
-                                 headers={"Content-Type": "application/json"})
+    # Cloudflare rejects urllib's default agent with error 1010; Discord expects
+    # the DiscordBot form.
+    req = urllib.request.Request(
+        url, data=payload,
+        headers={"Content-Type": "application/json",
+                 "User-Agent": "DiscordBot (https://github.com/manuerc/investing, 1.0)"})
     try:
         with urllib.request.urlopen(req, timeout=15) as r:
             return 200 <= r.status < 300

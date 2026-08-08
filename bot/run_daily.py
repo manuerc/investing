@@ -17,6 +17,7 @@ from pathlib import Path
 import yaml
 
 from bot import engine, notifier, state
+from tracker import metrics, publish
 
 warnings.filterwarnings("ignore")
 CFG_PATH = Path(__file__).resolve().parent / "config.yaml"
@@ -28,8 +29,12 @@ def main() -> None:
                     help="no escribe estado ni manda nada a Discord")
     ap.add_argument("--report", action="store_true", help="agrega el reporte semanal")
     ap.add_argument("--as-of", help="replay de una rueda pasada, formato YYYY-MM-DD")
+    ap.add_argument("--no-send", action="store_true",
+                    help="guarda el estado pero no manda nada a Discord (para backfill)")
     args = ap.parse_args()
 
+    notifier.load_env()
+    notifier.MUTED = args.no_send
     cfg = yaml.safe_load(CFG_PATH.read_text())
     con = state.connect()
     if state.import_json(con):
@@ -56,16 +61,19 @@ def main() -> None:
                                          cfg["equities"]["cooldown_bars"], bars):
             print(f"[BOT] {sig.asset}: en cooldown o con posición abierta, no se avisa")
             continue
-        if dry or state.record_equity_signal(con, sig, cfg["equities"]["hold_bars"]):
-            notifier.send("acciones", notifier.with_docs(notifier.equity_embed(sig), docs), dry)
-            sent_eq += 1
+        # Send first, persist second: if Discord fails, the signal stays
+        # unrecorded and gets retried tomorrow instead of being lost.
+        if notifier.send("acciones",
+                         notifier.with_docs(notifier.equity_embed(sig), docs), dry):
+            if dry or state.record_equity_signal(con, sig, cfg["equities"]["hold_bars"]):
+                sent_eq += 1
 
     # ---- cripto ----
     prev = {} if dry else state.get_crypto_weights(con)
     cr_signals, cr_status = engine.scan_crypto(cfg, prev, args.as_of)
     for sig in cr_signals:
-        notifier.send("cripto", notifier.with_docs(notifier.crypto_embed(sig), docs), dry)
-        if not dry:
+        ok = notifier.send("cripto", notifier.with_docs(notifier.crypto_embed(sig), docs), dry)
+        if ok and not dry:
             state.set_crypto_weight(con, sig.asset, sig.target_weight, sig.bar_date)
 
     # ---- régimen ----
@@ -73,11 +81,21 @@ def main() -> None:
     rg = engine.scan_regime(cfg, prev_state, args.as_of)
     if rg:
         year = int(rg.bar_date[:4])
-        if not dry:
+        n_changes = state.regime_changes_this_year(con, rg.proxy, year) + 1
+        ok = notifier.send("regimen",
+                           notifier.with_docs(notifier.regime_embed(rg, n_changes), docs), dry)
+        if ok and not dry:
             state.set_regime(con, rg.proxy, rg.state, rg.bar_date)
-        n_changes = state.regime_changes_this_year(con, rg.proxy, year)
-        notifier.send("regimen",
-                      notifier.with_docs(notifier.regime_embed(rg, n_changes), docs), dry)
+
+    # ---- rendimiento ----
+    # Recomputed every run so the dashboard is never stale; only published to
+    # Discord on report days, since the numbers barely move day to day.
+    if not dry:
+        perf = metrics.build(con)
+        metrics.write(con)
+        if args.report:
+            dash = (docs.rstrip("/") + "/rendimiento.html") if docs else None
+            publish.publish(perf, dash, dry)
 
     # ---- reporte ----
     if args.report:
