@@ -50,4 +50,4 @@ history_days: 900            # enough for EMA200 + 252d percentile ranks
 
 # Public URL of docs/index.html. Every alert links to it so anyone in the
 # server can read why the signal exists without asking. Leave empty to omit.
-docs_url: ""                 # p.ej. https://tuusuario.github.io/investing/
+docs_url: "https://manuerc.github.io/investing/"

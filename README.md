@@ -4,7 +4,7 @@ Sistema de señales de mediano plazo que publica avisos en Discord. Cada regla e
 medida sobre datos reales, con separación entre el período usado para descubrirla y
 el usado para validarla. Lo que no funciona también está documentado.
 
-**📖 [Cómo funciona el modelo](https://TU_USUARIO.github.io/investing/)** — la explicación
+**📖 [Cómo funciona el modelo](https://manuerc.github.io/investing/)** — la explicación
 completa, con los números y la metodología.
 
 ---
