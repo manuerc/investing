@@ -98,6 +98,54 @@ def build(docs_url: str | None) -> dict[str, dict]:
                 {"name": "Importante", "value": DISCLAIMER, "inline": False},
             ],
         },
+        "scorecard": {
+            "title": "📌 Qué vas a ver en este canal",
+            "description":
+                "Un resumen semanal de **qué hubiera pasado siguiendo cada canal** desde que "
+                "el sistema arrancó. No es el backtest: son los resultados reales de las "
+                "señales que se publicaron acá." + link,
+            "color": 0x2A78D6,
+            "fields": [
+                {"name": "⚠️ Lo que este canal NO puede hacer",
+                 "value": "**No puede demostrar que el sistema funciona, y nunca va a poder.** "
+                          "Detectar estadísticamente la ventaja de la señal de acciones exige "
+                          "unas 685 operaciones: **34 años** a 20 por año. Si alguien te muestra "
+                          "tres meses de resultados como prueba de que un sistema anda, te está "
+                          "vendiendo algo.",
+                 "inline": False},
+                {"name": "Para qué sirve entonces",
+                 "value": "Para detectar si el sistema **dejó de comportarse como el backtest**. "
+                          "Cada resultado se compara contra lo que el backtest predecía para esa "
+                          "cantidad de operaciones, no contra cero. Con 20 operaciones ya se "
+                          "nota si algo se rompió.",
+                 "inline": False},
+                {"name": "Paciencia al principio",
+                 "value": "Los primeros meses va a estar casi vacío: la primera operación cierra "
+                          "recién 21 ruedas después de la primera señal. Es lo correcto — "
+                          "inventar historia sería hacer trampa.",
+                 "inline": False},
+            ],
+        },
+        "alertas-modelo": {
+            "title": "📌 Este canal casi siempre va a estar en silencio",
+            "description":
+                "Y eso es exactamente lo que tiene que pasar. **Solo publica cuando un "
+                "resultado se sale de la banda que predice el backtest.**" + link,
+            "color": 0xEDA100,
+            "fields": [
+                {"name": "Si no hay mensajes",
+                 "value": "El sistema se está comportando dentro de lo esperado. No está roto: "
+                          "no tiene nada que decir.",
+                 "inline": False},
+                {"name": "Si aparece un mensaje",
+                 "value": "Significa que el resultado acumulado cayó por debajo del percentil 25 "
+                          "(🟡) o del percentil 5 (🔴) de 20.000 carteras simuladas a partir del "
+                          "backtest.\n\n**No significa que el sistema se rompió.** Con pocas "
+                          "operaciones el azar explica muchísimo. Es una señal para revisar, no "
+                          "para actuar.",
+                 "inline": False},
+            ],
+        },
         "reporte": {
             "title": "📌 Qué vas a ver en este canal",
             "description":

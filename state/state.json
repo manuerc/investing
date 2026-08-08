@@ -1,0 +1,75 @@
+{
+  "crypto_weight_history": [
+    {
+      "asset": "BTC",
+      "bar_date": "2026-08-07",
+      "id": 1,
+      "recorded_at": "2026-08-08T23:45:01+00:00",
+      "weight": 1.2222222222222223
+    },
+    {
+      "asset": "ETH",
+      "bar_date": "2026-08-07",
+      "id": 2,
+      "recorded_at": "2026-08-08T23:45:01+00:00",
+      "weight": 1.3373015873015874
+    },
+    {
+      "asset": "BNB",
+      "bar_date": "2026-08-07",
+      "id": 3,
+      "recorded_at": "2026-08-08T23:45:02+00:00",
+      "weight": 1.1865079365079365
+    }
+  ],
+  "crypto_weights": [
+    {
+      "asset": "BTC",
+      "bar_date": "2026-08-07",
+      "updated_at": "2026-08-08T23:45:01+00:00",
+      "weight": 1.2222222222222223
+    },
+    {
+      "asset": "ETH",
+      "bar_date": "2026-08-07",
+      "updated_at": "2026-08-08T23:45:01+00:00",
+      "weight": 1.3373015873015874
+    },
+    {
+      "asset": "BNB",
+      "bar_date": "2026-08-07",
+      "updated_at": "2026-08-08T23:45:02+00:00",
+      "weight": 1.1865079365079365
+    }
+  ],
+  "equity_signals": [],
+  "positions": [],
+  "regime_history": [
+    {
+      "bar_date": "2026-08-07",
+      "id": 1,
+      "proxy": "SPY",
+      "recorded_at": "2026-08-08T23:45:03+00:00",
+      "state": "RISK_ON"
+    }
+  ],
+  "regime_state": [
+    {
+      "bar_date": "2026-08-07",
+      "proxy": "SPY",
+      "state": "RISK_ON",
+      "updated_at": "2026-08-08T23:45:03+00:00"
+    }
+  ],
+  "runs": [
+    {
+      "dry_run": 0,
+      "id": 1,
+      "n_crypto": 3,
+      "n_equity": 0,
+      "n_exits": 0,
+      "ran_at": "2026-08-08T23:45:06+00:00",
+      "regime_change": 1
+    }
+  ]
+}
