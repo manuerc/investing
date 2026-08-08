@@ -116,6 +116,12 @@ class Discord:
             return {}
         return self._call("PUT", path)
 
+    def delete(self, path):
+        if self.dry:
+            print(f"    [dry-run] DELETE {path}")
+            return {}
+        return self._call("DELETE", path)
+
 
 # --------------------------------------------------------------------------- helpers
 
@@ -206,9 +212,46 @@ def link_channels(embed: dict, ids: dict[str, str]) -> dict:
     return e
 
 
-def post_and_pin(dc: Discord, channel_id: str, embed: dict) -> None:
-    msg = dc.post(f"/channels/{channel_id}/messages", {"embeds": [embed]})
-    dc.put(f"/channels/{channel_id}/pins/{msg['id']}")
+def try_pin(dc: Discord, channel_id: str, message_id: str) -> bool:
+    """Pinning needs Manage Messages. If it is missing, say so and carry on —
+    an unpinned message is a minor cosmetic issue, aborting the whole setup
+    halfway through is not."""
+    try:
+        dc.put(f"/channels/{channel_id}/pins/{message_id}")
+        return True
+    except RuntimeError as e:
+        if "50013" in str(e):
+            return False
+        raise
+
+
+def sync_messages(dc: Discord, channel_id: str, embeds: list[dict], bot_id: str,
+                  repost: bool = False) -> tuple[int, int]:
+    """Post whatever is missing and pin whatever is not pinned.
+
+    Idempotency keys on the messages the bot already has in the channel, not on
+    whether the channel was created in this run — so a partial failure can be
+    fixed by simply running the script again.
+    """
+    existing = [m for m in dc.get(f"/channels/{channel_id}/messages?limit=50")
+                if m.get("author", {}).get("id") == bot_id]
+    existing.reverse()                                  # oldest first
+
+    if repost and existing:
+        for m in existing:
+            dc.delete(f"/channels/{channel_id}/messages/{m['id']}")
+        existing = []
+
+    posted = unpinned = 0
+    for m in existing:
+        if not m.get("pinned") and not try_pin(dc, channel_id, m["id"]):
+            unpinned += 1
+    for embed in embeds[len(existing):]:
+        msg = dc.post(f"/channels/{channel_id}/messages", {"embeds": [embed]})
+        posted += 1
+        if not dc.dry and not try_pin(dc, channel_id, msg["id"]):
+            unpinned += 1
+    return posted, unpinned
 
 
 # --------------------------------------------------------------------------- content
@@ -366,6 +409,8 @@ def main() -> None:
     ap.add_argument("--guild-id")
     ap.add_argument("--webhooks", action="store_true",
                     help="crear también los 4 webhooks del job diario")
+    ap.add_argument("--repost", action="store_true",
+                    help="borrar los mensajes del bot y publicarlos de nuevo")
     args = ap.parse_args()
 
     load_env()
@@ -391,42 +436,47 @@ def main() -> None:
 
     print("\nCanales")
     created: dict[str, str] = {}
-    fresh: set[str] = set()
     for cat_name, readonly, channels in STRUCTURE:
         cat_id, _ = ensure_channel(dc, gid, existing, cat_name, CHANNEL_CATEGORY)
         for name, topic in channels:
-            cid, is_new = ensure_channel(dc, gid, existing, name, CHANNEL_TEXT,
-                                         parent=cat_id, topic=topic, readonly=readonly)
+            cid, _ = ensure_channel(dc, gid, existing, name, CHANNEL_TEXT,
+                                    parent=cat_id, topic=topic, readonly=readonly)
             created[name] = cid
-            if is_new:
-                fresh.add(name)
 
-    print("\nMensajes fijados")
-    intros = intro_embeds(docs_url)
-    welcome = post_welcome.build(docs_url)
-    for name, embeds in intros.items():
-        if name not in fresh:
-            print(f"  {name}: ya existía, no se publica de nuevo")
-            continue
-        for e in embeds:
-            post_and_pin(dc, created[name], link_channels(e, created))
-        print(f"  {name}: {len(embeds)} mensaje(s) publicado(s) y fijado(s)")
+    print("\nMensajes")
+    bot_id = dc.get("/users/@me")["id"]
+    plan = {name: [link_channels(e, created) for e in embeds]
+            for name, embeds in intro_embeds(docs_url).items()}
+    for name, embed in post_welcome.build(docs_url).items():
+        plan[name] = [link_channels(notifier_ready(embed, docs_url), created)]
 
-    for name, embed in welcome.items():
-        if name not in fresh:
-            print(f"  {name}: ya existía, no se publica de nuevo")
-            continue
-        post_and_pin(dc, created[name],
-                     link_channels(notifier_ready(embed, docs_url), created))
-        print(f"  {name}: bienvenida publicada y fijada")
+    total_unpinned = 0
+    for name, embeds in plan.items():
+        posted, unpinned = sync_messages(dc, created[name], embeds, bot_id, args.repost)
+        total_unpinned += unpinned
+        if posted:
+            print(f"  {name}: {posted} mensaje(s) publicado(s)"
+                  + (f", {unpinned} sin fijar" if unpinned else " y fijado(s)"))
+        else:
+            print(f"  {name}: ya estaba al día")
 
     if args.webhooks:
         print("\nWebhooks — pegá estas URLs en .env y en los GitHub Secrets")
         for name, env_var in WEBHOOK_CHANNELS.items():
-            wh = dc.post(f"/channels/{created[name]}/webhooks", {"name": "Señales"})
+            mine = [w for w in dc.get(f"/channels/{created[name]}/webhooks")
+                    if w.get("name") == "Señales"]
+            wh = mine[0] if mine else dc.post(f"/channels/{created[name]}/webhooks",
+                                              {"name": "Señales"})
             url = wh.get("url") or (f"https://discord.com/api/webhooks/{wh['id']}/{wh['token']}"
                                     if wh.get("token") else "[dry-run]")
             print(f"  {env_var}={url}")
+
+    if total_unpinned:
+        print(f"\n[SETUP] ⚠️  {total_unpinned} mensaje(s) quedaron SIN FIJAR: al bot le falta "
+              "el permiso 'Gestionar mensajes'.\n"
+              "        Ajustes del servidor → Roles → rol del bot → activar "
+              "'Gestionar mensajes',\n        y volvé a correr este script "
+              "(no duplica nada, solo fija lo que falta).")
 
     print("\n[SETUP] listo.")
     if args.dry_run:
