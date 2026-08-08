@@ -22,7 +22,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  señales:
+  # El id del job debe ser ASCII: GitHub Actions rechaza el workflow entero si
+  # tiene acentos o ñ, y falla en 0s sin ejecutar nada. El nombre visible sí puede.
+  senales:
+    name: Señales
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
