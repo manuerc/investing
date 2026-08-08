@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+
+# Tokens y webhooks: nunca al repo.
+.env
+*.token
+
+# Caché de precios y estado del bot: regenerables, no van al repo.
+data/
+
+# Los resultados chicos SÍ se publican, para que cualquiera pueda verificar
+# los números de la documentación. Solo se excluye el archivo pesado.
+out/base_rate_trades.csv

@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modelo de señales · Acciones y cripto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --page:#f6f6f4; --surface-1:#fcfcfb; --surface-2:#f0f0ed;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#84837c;
+  --border:#e2e1dc; --border-strong:#cfcec7;
+  --series-1:#2a78d6; --series-2:#eb6834;
+  --good:#1baf7a; --bad:#e34948; --warn:#eda100;
+  --accent:#2a78d6;
+  --radius:10px; --radius-lg:14px;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#131312; --surface-1:#1a1a19; --surface-2:#232322;
+  --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#8f8e85;
+  --border:#2e2e2c; --border-strong:#3d3d3a;
+  --series-1:#3987e5; --series-2:#d95926;
+  --good:#199e70; --bad:#e66767; --warn:#c98500;
+  --accent:#3987e5;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --page:#131312; --surface-1:#1a1a19; --surface-2:#232322;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#8f8e85;
+    --border:#2e2e2c; --border-strong:#3d3d3a;
+    --series-1:#3987e5; --series-2:#d95926;
+    --good:#199e70; --bad:#e66767; --warn:#c98500;
+    --accent:#3987e5;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text-primary);
+  font:400 15px/1.65 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:920px;margin:0 auto;padding:0 24px 100px}
+header.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--page) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.top-in{max-width:920px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:14px}
+.brand{font-weight:650;font-size:14px;letter-spacing:-.01em}
+.brand span{color:var(--text-muted);font-weight:400}
+.spacer{flex:1}
+.tbtn{border:1px solid var(--border);background:var(--surface-1);color:var(--text-secondary);
+  border-radius:8px;padding:6px 11px;font:500 12.5px Inter,sans-serif;cursor:pointer}
+.tbtn:hover{border-color:var(--border-strong);color:var(--text-primary)}
+h1{font-size:33px;line-height:1.2;letter-spacing:-.025em;margin:44px 0 10px;font-weight:700}
+h2{font-size:21px;letter-spacing:-.018em;margin:52px 0 14px;font-weight:650;
+  padding-top:20px;border-top:1px solid var(--border)}
+h3{font-size:16px;letter-spacing:-.01em;margin:30px 0 10px;font-weight:600}
+p{margin:0 0 14px;color:var(--text-secondary)}
+p strong,li strong{color:var(--text-primary);font-weight:600}
+.lede{font-size:17px;color:var(--text-secondary);margin-bottom:26px}
+ul,ol{color:var(--text-secondary);padding-left:20px;margin:0 0 14px}
+li{margin-bottom:6px}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface-2);
+  border:1px solid var(--border);border-radius:5px;padding:1.5px 5px;color:var(--text-primary)}
+pre{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:none;padding:0;font-size:12.5px;line-height:1.7}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}
+.chip{font:500 12px Inter,sans-serif;color:var(--text-secondary);background:var(--surface-1);
+  border:1px solid var(--border);border-radius:100px;padding:4px 11px}
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px 22px;margin:0 0 20px}
+.card-t{font:650 14px Inter,sans-serif;margin:0 0 4px;letter-spacing:-.01em}
+.card-s{font-size:13px;color:var(--text-muted);margin:0 0 16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;
+  background:var(--border);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin:0 0 20px}
+.kpi{background:var(--surface-1);padding:15px 16px}
+.kpi-l{font:500 11.5px Inter,sans-serif;color:var(--text-muted);text-transform:uppercase;
+  letter-spacing:.055em;margin-bottom:6px}
+.kpi-v{font:650 25px/1.1 Inter,sans-serif;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.kpi-d{font-size:12px;color:var(--text-muted);margin-top:4px}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:0 0 18px}
+th{text-align:left;font:600 11.5px Inter,sans-serif;color:var(--text-muted);text-transform:uppercase;
+  letter-spacing:.05em;padding:0 10px 8px;border-bottom:1px solid var(--border-strong)}
+td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text-secondary);
+  font-variant-numeric:tabular-nums}
+td:first-child,th:first-child{padding-left:0}
+td:last-child,th:last-child{padding-right:0}
+td.k{color:var(--text-primary);font-weight:500}
+th.n,td.n{text-align:right}
+tr.hi td{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.note{border-left:2px solid var(--border-strong);padding:2px 0 2px 16px;margin:0 0 18px;
+  color:var(--text-muted);font-size:13.5px}
+.note.warn{border-left-color:var(--warn)}
+.note.bad{border-left-color:var(--bad)}
+.note b{color:var(--text-secondary)}
+figure{margin:0 0 8px}
+figcaption{font-size:12.5px;color:var(--text-muted);margin-top:10px;line-height:1.55}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin:0 0 12px}
+.lg{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-secondary)}
+.sw{width:11px;height:11px;border-radius:3px;flex:none}
+.chart{width:100%;overflow:visible;display:block}
+.chart text{font-family:Inter,system-ui,sans-serif}
+.gl{stroke:var(--border);stroke-width:1}
+.axl{fill:var(--text-muted);font-size:11px}
+.dlab{fill:var(--text-primary);font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.bar{transition:opacity .12s}
+.chart:hover .bar{opacity:.45}
+.chart .bar:hover{opacity:1}
+.tip{position:fixed;z-index:80;pointer-events:none;opacity:0;transition:opacity .1s;
+  background:var(--surface-1);border:1px solid var(--border-strong);border-radius:8px;
+  padding:9px 11px;font-size:12.5px;box-shadow:0 6px 20px rgba(0,0,0,.14);max-width:240px}
+.tip.on{opacity:1}
+.tip-t{font-weight:650;color:var(--text-primary);margin-bottom:5px;font-size:12.5px}
+.tip-r{display:flex;justify-content:space-between;gap:14px;color:var(--text-secondary);line-height:1.55}
+.tip-r b{color:var(--text-primary);font-variant-numeric:tabular-nums;font-weight:600}
+details{margin:0 0 18px}
+summary{cursor:pointer;font:500 13px Inter,sans-serif;color:var(--text-muted);
+  padding:7px 0;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary:before{content:"▸ ";color:var(--text-muted)}
+details[open] summary:before{content:"▾ "}
+summary:hover{color:var(--text-primary)}
+.toc{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px 20px;margin:0 0 34px}
+.toc ol{margin:0;padding-left:19px;font-size:13.5px;columns:2;column-gap:28px}
+@media(max-width:640px){.toc ol{columns:1}}
+.toc a{text-decoration:none;color:var(--text-secondary)}
+.toc a:hover{color:var(--accent)}
+.sig{border:1px solid var(--border);border-left:3px solid var(--accent);
+  border-radius:var(--radius);background:var(--surface-1);padding:16px 18px;margin:0 0 18px}
+.sig-h{font:650 13px Inter,sans-serif;color:var(--accent);text-transform:uppercase;
+  letter-spacing:.05em;margin-bottom:9px}
+footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--border);
+  font-size:12.5px;color:var(--text-muted)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">Modelo de señales <span>· acciones y cripto</span></div>
+    <div class="spacer"></div>
+    <button class="tbtn" id="themeBtn">Tema</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+<h1>Cómo funciona el modelo de señales</h1>
+<p class="lede">Documentación del sistema que alimenta los canales de Discord. Todo lo que
+sigue está medido sobre datos reales, con separación entre el período usado para descubrir
+las reglas y el usado para validarlas. Donde algo no funciona, está dicho.</p>
+
+<div class="meta">
+  <span class="chip">92 activos</span>
+  <span class="chip">369.000 filas</span>
+  <span class="chip">2010 – 2026</span>
+  <span class="chip">~45 indicadores evaluados</span>
+  <span class="chip">2 señales validadas</span>
+</div>
+
+<div class="toc">
+  <ol>
+    <li><a href="#resumen">Resumen: qué se opera</a></li>
+    <li><a href="#metodo">Metodología y anti-sobreajuste</a></li>
+    <li><a href="#hallazgo">El hallazgo estructural</a></li>
+    <li><a href="#control">Control de survivorship bias</a></li>
+    <li><a href="#cripto">Señal A — Cripto</a></li>
+    <li><a href="#acciones">Señal B — Acciones</a></li>
+    <li><a href="#nofunciona">Lo que no funciona</a></li>
+    <li><a href="#riesgos">Límites y riesgos</a></li>
+    <li><a href="#repro">Reproducir los números</a></li>
+  </ol>
+</div>
+
+<h2 id="resumen">1 · Resumen: qué se opera</h2>
+
+<p>El sistema emite dos señales independientes. Son distintas en naturaleza porque los dos
+mercados se comportan de forma opuesta, y eso no es una opinión: sale del screening.</p>
+
+<div class="sig">
+  <div class="sig-h">Señal A · Cripto — momentum</div>
+  <p style="margin-bottom:8px">Sobreponderar cuando el precio está por encima de su EMA200;
+  subponderar cuando está castigado. Es una señal de <b>peso</b>, no de encendido/apagado.</p>
+  <div class="kpis" style="margin:0">
+    <div class="kpi"><div class="kpi-l">Sharpe OOS</div><div class="kpi-v pos">1,03</div><div class="kpi-d">vs 0,91 comprar y mantener</div></div>
+    <div class="kpi"><div class="kpi-l">CAGR OOS</div><div class="kpi-v pos">58,5%</div><div class="kpi-d">vs 45,3%</div></div>
+    <div class="kpi"><div class="kpi-l">Drawdown OOS</div><div class="kpi-v pos">−74,5%</div><div class="kpi-d">vs −79,4%, también mejor</div></div>
+  </div>
+</div>
+
+<div class="sig">
+  <div class="sig-h">Señal B · Acciones — reversión en tendencia</div>
+  <p style="margin-bottom:8px">Comprar caídas de corto plazo <b>solo</b> dentro de una tendencia
+  alcista, con la confianza graduada por cuántas condiciones coinciden. Salida a plazo fijo.</p>
+  <div class="kpis" style="margin:0">
+    <div class="kpi"><div class="kpi-l">P(sube) 5 cond.</div><div class="kpi-v">63,9%</div><div class="kpi-d">base 55,7% · 10 ruedas</div></div>
+    <div class="kpi"><div class="kpi-l">P(sube) 6 cond.</div><div class="kpi-v">67,9%</div><div class="kpi-d">base 55,7%</div></div>
+    <div class="kpi"><div class="kpi-l">Edge por operación</div><div class="kpi-v">+1,1 pp</div><div class="kpi-d">salida a 21 ruedas</div></div>
+  </div>
+</div>
+
+<p class="note warn"><b>Dimensionar la expectativa.</b> La señal de acciones mejora el
+<i>timing</i>, no multiplica el retorno. El edge es de aproximadamente un punto porcentual por
+operación sobre comprar en un día cualquiera, con unas 20 operaciones al año. Lo que sí cambia
+de forma clara es la tasa de acierto.</p>
+
+<h2 id="metodo">2 · Metodología y anti-sobreajuste</h2>
+
+<p>Con suficientes indicadores y un solo período, siempre aparece algo que "funciona". El diseño
+del estudio está armado alrededor de evitar exactamente eso.</p>
+
+<table>
+  <thead><tr><th>Decisión</th><th>Por qué</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Universo de research separado</td><td>Las reglas se calibran sobre 82 activos ajenos al watchlist personal. El watchlist se usa solo para <i>aplicar</i>, nunca para ajustar.</td></tr>
+    <tr><td class="k">Split IS / OOS</td><td>Descubrimiento en 2010–2019, validación en 2020–2026. Cada resultado se reporta por separado en ambos.</td></tr>
+    <tr><td class="k">Consistencia año a año</td><td>Más informativa que un p-valor con ventanas solapadas. Se exige que el signo se repita en la mayoría de los años.</td></tr>
+    <tr><td class="k">Descorrelación de eventos</td><td>Dentro de un activo, dos señales a menos de H ruedas cuentan como una sola. Sin esto los intervalos de confianza son ficticios.</td></tr>
+    <tr><td class="k">Solo velas cerradas</td><td>Los indicadores usan datos hasta el cierre del día T; la entrada se simula al <b>open de T+1</b>. Sin lookahead.</td></tr>
+    <tr><td class="k">Base rate como referencia</td><td>Ninguna métrica se lee sola. Siempre contra la probabilidad de entrar en un día al azar, en el mismo activo y el mismo plazo.</td></tr>
+    <tr><td class="k">Costos incluidos</td><td>10 bps por lado, con test de sensibilidad hasta 50 bps en la señal de cripto.</td></tr>
+  </tbody>
+</table>
+
+<p class="note"><b>El base rate es la clave de todo.</b> Estos activos subieron mucho en el
+período. Casi cualquier día fue un buen día para comprar. Sin comparar contra esa referencia,
+cualquier señal parece brillante.</p>
+
+<h2 id="hallazgo">3 · El hallazgo estructural</h2>
+
+<p>El screening midió la correlación de rango (IC) entre cada indicador y el retorno futuro, y
+separó dos dimensiones que suelen mezclarse:</p>
+
+<ul>
+  <li><b>IC transversal</b> — sirve para elegir <i>qué activo</i> comprar hoy entre varios.</li>
+  <li><b>IC temporal</b> — sirve para elegir <i>cuándo</i> comprar un activo dado.</li>
+</ul>
+
+<table>
+  <thead><tr><th>Indicador</th><th class="n">IC transversal<br><span style="font-weight:400;text-transform:none">qué activo</span></th><th class="n">IC temporal<br><span style="font-weight:400;text-transform:none">cuándo</span></th></tr></thead>
+  <tbody>
+    <tr><td class="k">Fuerza relativa 252d</td><td class="n pos">+0,033</td><td class="n neg">−0,045</td></tr>
+    <tr><td class="k">Precio vs EMA200</td><td class="n pos">+0,026</td><td class="n neg">−0,044</td></tr>
+    <tr><td class="k">EMA50 vs EMA200</td><td class="n pos">+0,026</td><td class="n neg">−0,045</td></tr>
+  </tbody>
+</table>
+
+<p>Los signos son opuestos. <b>Momentum sirve para elegir el activo; reversión sirve para elegir
+el momento.</b> Un bot que responde "¿compro esta acción hoy?" vive en la segunda columna — y ahí
+todo lo trend-following tiene signo negativo. Ese resultado fue el que invalidó el diseño
+inicial del sistema, que era enteramente de seguimiento de tendencia.</p>
+
+<h2 id="control">4 · Control de survivorship bias</h2>
+
+<p>El resultado de "comprar caídas" es exactamente el que un universo de sobrevivientes
+fabricaría: las grandes empresas de hoy son las que se recuperaron de sus caídas del 40%; las
+que no se recuperaron están deslistadas y ausentes del dataset.</p>
+
+<p>Los ETF sectoriales y de índice <b>no desaparecen</b>, así que sirven de grupo de control.
+Si el efecto fuera un artefacto del sesgo, sería más débil en ETFs.</p>
+
+<table>
+  <thead><tr><th>Indicador</th><th class="n">IC en ETFs<br><span style="font-weight:400;text-transform:none">sin sesgo</span></th><th class="n">IC en acciones<br><span style="font-weight:400;text-transform:none">con sesgo</span></th><th class="n">Años con<br>mismo signo</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Drawdown 252d</td><td class="n">−0,139</td><td class="n">−0,072</td><td class="n">15/17</td></tr>
+    <tr class="hi"><td class="k">RSI(14)</td><td class="n">−0,122</td><td class="n">−0,046</td><td class="n">17/17</td></tr>
+    <tr class="hi"><td class="k">Z-score 20d</td><td class="n">−0,085</td><td class="n">−0,040</td><td class="n">17/17</td></tr>
+    <tr><td class="k">Distancia a EMA200 en ATR</td><td class="n">−0,127</td><td class="n">−0,045</td><td class="n">14/17</td></tr>
+    <tr><td class="k">SPY vs su EMA200</td><td class="n">−0,143</td><td class="n">−0,090</td><td class="n">16/17</td></tr>
+    <tr><td class="k">ATR %</td><td class="n">+0,154</td><td class="n">+0,115</td><td class="n">15/17</td></tr>
+  </tbody>
+</table>
+
+<p>El efecto es <b>más fuerte</b> en los ETFs, no más débil. No es survivorship bias. Tiene
+sentido: un índice diversificado no puede ir a cero, así que sus caídas revierten de manera
+confiable. Una acción individual sí puede. RSI(14) y el z-score de 20 días mantuvieron el mismo
+signo <b>los 17 años</b>.</p>
+
+<h2 id="cripto">5 · Señal A — Cripto</h2>
+
+<p>En cripto el signo se invierte: lo que paga es comprar fuerza, no debilidad. La señal es un
+<b>peso</b> continuo, no una orden de entrada.</p>
+
+<pre><code>score  = percentil 252d de (precio / EMA200)
+peso   = recortar(0,5 + score, 0, 2)      → oscila entre 0,5x y 1,5x
+rebal. = solo si el peso objetivo se mueve más de 0,10</code></pre>
+
+<figure>
+  <div class="card">
+    <div class="card-t">Sharpe: tilt de momentum vs comprar y mantener</div>
+    <div class="card-s">10 monedas · IS 2014–2019, OOS 2020–2026 · costos 10 bps por lado</div>
+    <div class="legend">
+      <div class="lg"><span class="sw" style="background:var(--series-1)"></span>Tilt de momentum</div>
+      <div class="lg"><span class="sw" style="background:var(--series-2)"></span>Comprar y mantener</div>
+    </div>
+    <svg id="c2" class="chart" viewBox="0 0 660 250" role="img"
+      aria-label="Sharpe del tilt de momentum contra comprar y mantener, en período de descubrimiento y validación"></svg>
+  </div>
+  <figcaption>El tilt supera a comprar y mantener en ambos períodos, y además reduce el
+  drawdown. La ventaja se sostiene fuera de muestra, que es la prueba que importa.</figcaption>
+</figure>
+
+<details>
+  <summary>Ver datos en tabla</summary>
+  <table>
+    <thead><tr><th>Período</th><th class="n">Sharpe tilt</th><th class="n">Sharpe B&amp;H</th><th class="n">CAGR tilt</th><th class="n">CAGR B&amp;H</th><th class="n">Max DD tilt</th><th class="n">Max DD B&amp;H</th></tr></thead>
+    <tbody>
+      <tr><td class="k">IS 2014–2019</td><td class="n">1,162</td><td class="n">1,097</td><td class="n">82,6%</td><td class="n">69,2%</td><td class="n">−83,4%</td><td class="n">−87,1%</td></tr>
+      <tr><td class="k">OOS 2020–2026</td><td class="n">1,027</td><td class="n">0,905</td><td class="n">58,5%</td><td class="n">45,3%</td><td class="n">−74,5%</td><td class="n">−79,4%</td></tr>
+    </tbody>
+  </table>
+</details>
+
+<h3>Las tres validaciones</h3>
+<div class="grid2">
+  <div class="card">
+    <div class="card-t">9 de 9 indicadores</div>
+    <p style="margin:0;font-size:13.5px">Todos los features de momentum probados superan a
+    comprar y mantener, en ambos períodos. No depende de elegir el indicador correcto.</p>
+  </div>
+  <div class="card">
+    <div class="card-t">10 de 10 en leave-one-out</div>
+    <p style="margin:0;font-size:13.5px">Sacando cualquiera de las diez monedas, la ventaja se
+    mantiene. No la genera un solo activo.</p>
+  </div>
+  <div class="card">
+    <div class="card-t">Sobrevive a los costos</div>
+    <p style="margin:0;font-size:13.5px">Con banda de 0,10 el turnover baja a 4,7× por año.
+    Incluso a 50 bps el Sharpe queda en 0,999 contra 0,905.</p>
+  </div>
+  <div class="card">
+    <div class="card-t">Mejor en las dos puntas</div>
+    <p style="margin:0;font-size:13.5px">Gana más en los años buenos y pierde menos en 2018 y
+    2022. No es simplemente apalancamiento disfrazado.</p>
+  </div>
+</div>
+
+<h2 id="acciones">6 · Señal B — Acciones</h2>
+
+<p>Escalera de sobreventa. Todas las condiciones exigen <code>precio &gt; EMA200</code>: solo se
+compran caídas dentro de una tendencia alcista. La confianza se gradúa contando cuántas
+coinciden.</p>
+
+<pre><code>1. RSI(2) &lt; 10
+2. IBS &lt; 0,20              cierre en el 20% inferior del rango del día
+3. RSI(14) &lt; 40
+4. z-score 20d &lt; −1,5
+5. 3 o más ruedas bajando seguidas
+6. SPY castigado           percentil 252d de SPY/EMA200 mayor a 0,70</code></pre>
+
+<figure>
+  <div class="card">
+    <div class="card-t">Probabilidad de que el precio suba en 10 ruedas</div>
+    <div class="card-s">Watchlist personal · 15 acciones · 2010–2026 · eventos descorrelacionados</div>
+    <svg id="c1" class="chart" viewBox="0 0 660 290" role="img"
+      aria-label="Probabilidad de suba a 10 ruedas según cuántas condiciones de sobreventa coinciden"></svg>
+  </div>
+  <figcaption>La escalera es monótona: más condiciones, más probabilidad. La línea punteada es
+  el base rate — la probabilidad de que suba entrando en un día cualquiera.</figcaption>
+</figure>
+
+<details>
+  <summary>Ver datos en tabla</summary>
+  <table>
+    <thead><tr><th>Condiciones</th><th class="n">n</th><th class="n">P(sube)</th><th class="n">IC 95%</th><th class="n">Base</th><th class="n">Lift</th><th class="n">OOS</th></tr></thead>
+    <tbody>
+      <tr><td class="k">0</td><td class="n">3.288</td><td class="n">55,5%</td><td class="n">53,8–57,2</td><td class="n">55,7%</td><td class="n">−0,2 pp</td><td class="n">56,8%</td></tr>
+      <tr><td class="k">1</td><td class="n">3.095</td><td class="n">55,3%</td><td class="n">53,6–57,1</td><td class="n">55,7%</td><td class="n">−0,3 pp</td><td class="n">55,3%</td></tr>
+      <tr><td class="k">2</td><td class="n">1.736</td><td class="n">56,8%</td><td class="n">54,5–59,1</td><td class="n">55,7%</td><td class="n">+1,1 pp</td><td class="n">54,8%</td></tr>
+      <tr><td class="k">3</td><td class="n">931</td><td class="n">58,1%</td><td class="n">54,9–61,3</td><td class="n">55,7%</td><td class="n">+2,4 pp</td><td class="n">57,4%</td></tr>
+      <tr><td class="k">4</td><td class="n">563</td><td class="n">57,4%</td><td class="n">53,3–61,5</td><td class="n">55,7%</td><td class="n">+1,7 pp</td><td class="n">56,0%</td></tr>
+      <tr class="hi"><td class="k">5</td><td class="n">294</td><td class="n">63,9%</td><td class="n">58,5–69,4</td><td class="n">55,7%</td><td class="n">+8,3 pp</td><td class="n">60,7%</td></tr>
+      <tr class="hi"><td class="k">6</td><td class="n">106</td><td class="n">67,9%</td><td class="n">59,0–76,8</td><td class="n">55,7%</td><td class="n">+12,3 pp</td><td class="n">62,2%</td></tr>
+    </tbody>
+  </table>
+</details>
+
+<p><b>Transfiere sin reajustar.</b> La escalera se calibró sobre 82 activos ajenos y se aplicó
+tal cual al watchlist personal. Funciona mejor ahí que en el universo de research, lo cual es
+coherente: son empresas de calidad, y las caídas de empresas de calidad revierten.</p>
+
+<h3>La salida</h3>
+
+<p>Probé cinco reglas de salida. La comparación honesta no es cuál da más retorno, sino cuál da
+más retorno <b>respecto del base rate del mismo plazo</b> — si no, "aguantar más tiempo" gana
+siempre en un mercado alcista.</p>
+
+<table>
+  <thead><tr><th>Salida</th><th class="n">Retorno señal</th><th class="n">Base mismo plazo</th><th class="n">Edge real</th></tr></thead>
+  <tbody>
+    <tr><td class="k">5 ruedas</td><td class="n">+1,1%</td><td class="n">+0,4%</td><td class="n">+0,6 pp</td></tr>
+    <tr><td class="k">10 ruedas</td><td class="n">+1,7%</td><td class="n">+0,9%</td><td class="n">+0,8 pp</td></tr>
+    <tr class="hi"><td class="k">21 ruedas</td><td class="n">+3,0%</td><td class="n">+1,9%</td><td class="n">+1,1 pp</td></tr>
+    <tr><td class="k">RSI(14) &gt; 70</td><td class="n">+6,2%</td><td class="n">+5,8%</td><td class="n">+0,4 pp</td></tr>
+    <tr><td class="k">Trailing 2,5×ATR</td><td class="n">+1,3%</td><td class="n">—</td><td class="n">40% aciertos</td></tr>
+  </tbody>
+</table>
+
+<p class="note bad"><b>Trampa evitada.</b> La salida por RSI&gt;70 parecía la mejor con +6,2% y
+70% de aciertos. Pero el 48% de esas operaciones nunca alcanza RSI 70 y sale por el tope de 63
+ruedas: la duración mediana es 61 ruedas. Ese retorno era casi todo plazo, no señal. Contra la
+base del mismo plazo el edge se derrumba a +0,4 pp.</p>
+
+<p><b>Regla elegida: salida a 21 ruedas fijas.</b> Los stops dinámicos empeoran el resultado —
+trailing de 2,5×ATR baja los aciertos al 40%, y target +5%/stop −3% al 43%. La reversión
+necesita aire.</p>
+
+<div class="kpis">
+  <div class="kpi"><div class="kpi-l">Operaciones</div><div class="kpi-v">338</div><div class="kpi-d">2010–2026, 15 acciones</div></div>
+  <div class="kpi"><div class="kpi-l">Aciertos</div><div class="kpi-v">59,8%</div><div class="kpi-d">base 57,6%</div></div>
+  <div class="kpi"><div class="kpi-l">Años positivos</div><div class="kpi-v">15/17</div><div class="kpi-d">flojos: 2012 y 2020</div></div>
+  <div class="kpi"><div class="kpi-l">Activos positivos</div><div class="kpi-v">14/15</div><div class="kpi-d">único negativo: IRSA</div></div>
+</div>
+
+<h2 id="nofunciona">7 · Lo que no funciona</h2>
+
+<p>Documentado con el mismo detalle que lo que sí funciona, para no volver a probarlo.</p>
+
+<table>
+  <thead><tr><th>Idea</th><th>Resultado</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Señal de venta por sobrecompra</td><td>La escalera espejo (RSI2&gt;95, IBS&gt;0,85, RSI14&gt;70, z&gt;1,5, 4+ subas) <b>no predice caídas</b>. Lift entre −0,6 y +1,0 pp. En el watchlist incluso da positivo.</td></tr>
+    <tr><td class="k">Playbook de pullback en tendencia</td><td>442 señales, IC prácticamente cero. Exigir un retroceso hasta la EMA50 selecciona los momentos de debilidad relativa.</td></tr>
+    <tr><td class="k">Playbook de reversión sobrevendida sin filtro de tendencia</td><td>10 señales, 20% de acierto, R promedio −0,65. Destruye valor.</td></tr>
+    <tr><td class="k">Reversión como interruptor on/off en acciones</td><td>Sharpe 0,34 contra 0,60 de comprar y mantener. Estar afuera el 55% del tiempo cuesta más que el edge.</td></tr>
+    <tr><td class="k">Rotación hacia los más castigados</td><td>Sharpe 0,69 contra 1,16. Transversalmente conviene lo contrario.</td></tr>
+    <tr><td class="k">Filtro de tendencia como generador de retorno</td><td>Estar long solo con SPY&gt;EMA200 baja el drawdown de −39,5% a −23,8%, pero también el Sharpe de 1,16 a 1,03. Es defensa, no alfa.</td></tr>
+  </tbody>
+</table>
+
+<p class="note"><b>Sobre la venta.</b> Para acciones de calidad en tendencia alcista, los
+indicadores de sobrecompra no anticipan caídas. La salida tiene que ser mecánica — plazo
+cumplido o ruptura de tendencia de fondo — no por indicador de momentum. El único caso con
+señal real es <code>RSI(2) &gt; 95 con precio &lt; EMA200</code>, que es fadear un rebote en
+tendencia bajista: otro animal, no aplica a cerrar una posición ganadora.</p>
+
+<h2 id="riesgos">8 · Límites y riesgos</h2>
+
+<ul>
+  <li><b>Cola izquierda gruesa en acciones.</b> Gana seguido pero cuando pierde, pierde grande:
+  la peor operación fue −34,3% y el percentil 5 es −12,0%. Sizing fijo por operación, sin
+  concentrar.</li>
+  <li><b>El resultado de cripto vive sobre dos bull runs.</b> 2017 y 2021 aportan buena parte
+  de la ventaja. El mecanismo es momentum, que históricamente se rompe en mercados laterales
+  largos. 2025 fue el peor año relativo.</li>
+  <li><b>El universo de research tiene sesgo de supervivencia.</b> Mitigado con el control de
+  ETFs y con métricas relativas al benchmark, pero no eliminado.</li>
+  <li><b>Comparaciones múltiples.</b> Se probaron decenas de reglas. Lo que sobrevive lo hace
+  por consistencia año a año y coherencia entre IS y OOS, no por un p-valor aislado.</li>
+  <li><b>Ventanas solapadas.</b> Los intervalos de confianza usan eventos descorrelacionados,
+  pero siguen siendo aproximados.</li>
+  <li><b>IRSA queda fuera por liquidez.</b> El ADR opera unos 694 mil dólares diarios, debajo
+  del filtro de 5 millones.</li>
+  <li><b>Nada de esto es asesoramiento financiero.</b> Es un proyecto personal de investigación
+  con dinero propio.</li>
+</ul>
+
+<h2 id="repro">9 · Reproducir los números</h2>
+
+<p>Cada tabla de esta página sale de un script del repo. Todos escriben su salida en
+<code>out/</code>.</p>
+
+<table>
+  <thead><tr><th>Script</th><th>Qué produce</th></tr></thead>
+  <tbody>
+    <tr><td class="k"><code>run_screen.py</code></td><td>IC de los ~45 indicadores contra retornos futuros a 3, 5, 10, 21, 63 y 126 ruedas</td></tr>
+    <tr><td class="k"><code>run_control.py</code></td><td>Control de survivorship bias: ETFs contra acciones individuales</td></tr>
+    <tr><td class="k"><code>run_meanrev.py</code></td><td>Tabla de deciles del score de reversión, IS contra OOS</td></tr>
+    <tr><td class="k"><code>run_allocation.py</code></td><td>Tests de tilt y de rotación</td></tr>
+    <tr><td class="k"><code>run_crypto.py</code></td><td>Validación de cripto: por feature, año a año y leave-one-out</td></tr>
+    <tr><td class="k"><code>run_rules.py</code></td><td>Minería de reglas con intervalos de confianza y descorrelación</td></tr>
+    <tr><td class="k"><code>run_ladder.py</code></td><td>Escalera de confianza, research y watchlist</td></tr>
+    <tr><td class="k"><code>run_signal_final.py</code></td><td>Comparación de reglas de salida y estabilidad</td></tr>
+  </tbody>
+</table>
+
+<pre><code># levantar esta página
+python3 serve.py            # http://localhost:8000
+
+# regenerar los números
+python3 run_screen.py --force
+python3 run_ladder.py
+python3 run_crypto.py</code></pre>
+
+<footer>
+  Proyecto personal de investigación · los datos vienen de Yahoo Finance vía <code>yfinance</code> ·
+  última corrida del backtest: agosto 2026 · sin asesoramiento financiero.
+</footer>
+
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script>
+(function(){
+  const root=document.documentElement, btn=document.getElementById('themeBtn');
+  const saved=localStorage.getItem('theme'); if(saved) root.setAttribute('data-theme',saved);
+  btn.onclick=()=>{
+    const cur=root.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+    const next=cur==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next); localStorage.setItem('theme',next);
+    draw();
+  };
+
+  const tip=document.getElementById('tip');
+  function showTip(e,title,rows){
+    tip.innerHTML='<div class="tip-t">'+title+'</div>'+
+      rows.map(r=>'<div class="tip-r"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>').join('');
+    tip.classList.add('on');
+    const w=tip.offsetWidth,h=tip.offsetHeight;
+    let x=e.clientX+14,y=e.clientY-h-10;
+    if(x+w>innerWidth-8) x=e.clientX-w-14;
+    if(y<8) y=e.clientY+16;
+    tip.style.left=x+'px'; tip.style.top=y+'px';
+  }
+  const hideTip=()=>tip.classList.remove('on');
+
+  const NS='http://www.w3.org/2000/svg';
+  const el=(n,a)=>{const s=document.createElementNS(NS,n);
+    for(const k in a) s.setAttribute(k,a[k]); return s;};
+  const pct=v=>(v*100).toFixed(1).replace('.',',')+'%';
+
+  // ---- chart 1: confidence ladder ----
+  const LADDER=[
+    {k:'0',p:.555,n:3288,lo:.538,hi:.572,oos:.568},
+    {k:'1',p:.553,n:3095,lo:.536,hi:.571,oos:.553},
+    {k:'2',p:.568,n:1736,lo:.545,hi:.591,oos:.548},
+    {k:'3',p:.581,n:931, lo:.549,hi:.613,oos:.574},
+    {k:'4',p:.574,n:563, lo:.533,hi:.615,oos:.560},
+    {k:'5',p:.639,n:294, lo:.585,hi:.694,oos:.607},
+    {k:'6',p:.679,n:106, lo:.590,hi:.768,oos:.622}
+  ];
+  const BASE=.557;
+
+  function ladder(){
+    const svg=document.getElementById('c1'); svg.innerHTML='';
+    const W=660,H=290,mL=44,mR=16,mT=18,mB=56;
+    const iw=W-mL-mR, ih=H-mT-mB, y0=.50,y1=.72;
+    const Y=v=>mT+ih-(v-y0)/(y1-y0)*ih;
+    const cs=getComputedStyle(document.body);
+    const c1=cs.getPropertyValue('--series-1').trim();
+
+    for(let v=.50;v<=.7201;v+=.05){
+      svg.appendChild(el('line',{x1:mL,x2:W-mR,y1:Y(v),y2:Y(v),class:'gl'}));
+      const t=el('text',{x:mL-9,y:Y(v)+4,class:'axl','text-anchor':'end'});
+      t.textContent=Math.round(v*100)+'%'; svg.appendChild(t);
+    }
+
+    const band=iw/LADDER.length, bw=band-14;
+    LADDER.forEach((d,i)=>{
+      const x=mL+i*band+7, h=Math.max(2,mT+ih-Y(d.p));
+      const g=el('g',{class:'bar'});
+      g.appendChild(el('path',{
+        d:`M${x},${mT+ih} L${x},${Y(d.p)+4} Q${x},${Y(d.p)} ${x+4},${Y(d.p)}
+           L${x+bw-4},${Y(d.p)} Q${x+bw},${Y(d.p)} ${x+bw},${Y(d.p)+4} L${x+bw},${mT+ih} Z`,
+        fill:c1}));
+      const lab=el('text',{x:x+bw/2,y:Y(d.p)-8,class:'dlab','text-anchor':'middle'});
+      lab.textContent=pct(d.p); g.appendChild(lab);
+      g.appendChild(el('rect',{x:x,y:mT,width:bw,height:ih,fill:'transparent'}));
+      g.addEventListener('mousemove',e=>showTip(e,d.k+(d.k==='1'?' condición':' condiciones'),[
+        ['P(sube en 10 ruedas)',pct(d.p)],['IC 95%',pct(d.lo)+' – '+pct(d.hi)],
+        ['Solo out-of-sample',pct(d.oos)],['Eventos',d.n.toLocaleString('es')],
+        ['Lift sobre base',((d.p-BASE)*100).toFixed(1).replace('.',',')+' pp']]));
+      g.addEventListener('mouseleave',hideTip);
+      svg.appendChild(g);
+
+      const xl=el('text',{x:x+bw/2,y:H-mB+20,class:'axl','text-anchor':'middle'});
+      xl.textContent=d.k; svg.appendChild(xl);
+    });
+
+    svg.appendChild(el('line',{x1:mL,x2:W-mR,y1:Y(BASE),y2:Y(BASE),
+      stroke:cs.getPropertyValue('--text-muted').trim(),'stroke-width':1.5,'stroke-dasharray':'5 4'}));
+    const bl=el('text',{x:W-mR,y:Y(BASE)-7,class:'axl','text-anchor':'end'});
+    bl.textContent='base rate 55,7%'; svg.appendChild(bl);
+
+    const ax=el('text',{x:mL+iw/2,y:H-14,class:'axl','text-anchor':'middle'});
+    ax.textContent='condiciones de sobreventa que coinciden'; svg.appendChild(ax);
+  }
+
+  // ---- chart 2: crypto sharpe ----
+  const CRY=[
+    {k:'IS 2014–2019',tilt:1.162,bh:1.097,ct:.826,cb:.692,dt:-.834,db:-.871},
+    {k:'OOS 2020–2026',tilt:1.027,bh:.905,ct:.585,cb:.453,dt:-.745,db:-.794}
+  ];
+  function crypto(){
+    const svg=document.getElementById('c2'); svg.innerHTML='';
+    const W=660,H=250,mL=44,mR=16,mT=18,mB=48;
+    const iw=W-mL-mR, ih=H-mT-mB, y1=1.3;
+    const Y=v=>mT+ih-v/y1*ih;
+    const cs=getComputedStyle(document.body);
+    const c1=cs.getPropertyValue('--series-1').trim();
+    const c2=cs.getPropertyValue('--series-2').trim();
+
+    for(let v=0;v<=1.301;v+=.25){
+      svg.appendChild(el('line',{x1:mL,x2:W-mR,y1:Y(v),y2:Y(v),class:'gl'}));
+      const t=el('text',{x:mL-9,y:Y(v)+4,class:'axl','text-anchor':'end'});
+      t.textContent=v.toFixed(2).replace('.',','); svg.appendChild(t);
+    }
+
+    const band=iw/CRY.length;
+    CRY.forEach((d,i)=>{
+      const gw=Math.min(200,band-70), bw=(gw-2)/2, x0=mL+i*band+(band-gw)/2;
+      [[d.tilt,c1,'Tilt de momentum',0],[d.bh,c2,'Comprar y mantener',1]].forEach(([v,col,nm,j])=>{
+        const x=x0+j*(bw+2), yv=Y(v);
+        const g=el('g',{class:'bar'});
+        g.appendChild(el('path',{
+          d:`M${x},${mT+ih} L${x},${yv+4} Q${x},${yv} ${x+4},${yv}
+             L${x+bw-4},${yv} Q${x+bw},${yv} ${x+bw},${yv+4} L${x+bw},${mT+ih} Z`,fill:col}));
+        const lab=el('text',{x:x+bw/2,y:yv-8,class:'dlab','text-anchor':'middle'});
+        lab.textContent=v.toFixed(2).replace('.',','); g.appendChild(lab);
+        g.appendChild(el('rect',{x:x,y:mT,width:bw,height:ih,fill:'transparent'}));
+        g.addEventListener('mousemove',e=>showTip(e,nm+' · '+d.k,[
+          ['Sharpe',v.toFixed(3).replace('.',',')],
+          ['CAGR',pct(j===0?d.ct:d.cb)],
+          ['Max drawdown',pct(j===0?d.dt:d.db)]]));
+        g.addEventListener('mouseleave',hideTip);
+        svg.appendChild(g);
+      });
+      const xl=el('text',{x:x0+gw/2,y:H-mB+20,class:'axl','text-anchor':'middle'});
+      xl.textContent=d.k; svg.appendChild(xl);
+    });
+
+    const ax=el('text',{x:mL-9,y:mT-4,class:'axl','text-anchor':'end'});
+    ax.textContent='Sharpe'; svg.appendChild(ax);
+  }
+
+  function draw(){ ladder(); crypto(); }
+  draw();
+  addEventListener('resize',draw);
+  addEventListener('scroll',hideTip,{passive:true});
+})();
+</script>
+</body>
+</html>

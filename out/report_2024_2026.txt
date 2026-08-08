@@ -1,0 +1,55 @@
+
+============================================================================================
+  KPI PRINCIPAL — % de operaciones que alcanzan +10% USD antes del stop, en 3 meses
+============================================================================================
+                                  n  success_rate  loss_rate  timeout_rate  hit10_no_stop  avg_R  expectancy_pct  avg_ret_3m  avg_mfe  avg_mae  avg_bars_to_exit
+set                                                                                                                                                             
+SIGNALS (score>=70)             148         0.412      0.568         0.020          0.527  0.059           0.000       0.029    0.159   -0.141            17.486
+BASE RATE (any eligible day)  10821         0.468      0.499         0.034          0.633  0.181           0.009       0.061    0.198   -0.131            18.747
+
+  EDGE = success_rate(signals) - success_rate(base) = -5.6%
+
+--- por playbook ---
+       n  success_rate  loss_rate  timeout_rate  hit10_no_stop  avg_R  expectancy_pct  avg_ret_3m  avg_mfe  avg_mae  avg_bars_to_exit
+set                                                                                                                                  
+A    122         0.410      0.566         0.025          0.525  0.037          -0.000       0.019    0.155   -0.145            17.213
+B     21         0.476      0.524         0.000          0.524  0.360           0.016       0.098    0.184   -0.102            21.143
+C      5         0.200      0.800         0.000          0.600 -0.670          -0.050      -0.005    0.165   -0.197             8.800
+
+--- por clase de activo ---
+                   n  success_rate  loss_rate  timeout_rate  hit10_no_stop  avg_R  expectancy_pct  avg_ret_3m  avg_mfe  avg_mae  avg_bars_to_exit
+set                                                                                                                                              
+signals/crypto    27         0.481      0.519         0.000          0.519 -0.023          -0.008      -0.021    0.183   -0.239            12.370
+base/crypto     2577         0.540      0.457         0.003          0.690  0.086           0.006       0.055    0.282   -0.200            15.975
+signals/stock    121         0.397      0.579         0.025          0.529  0.078           0.002       0.040    0.154   -0.119            18.628
+base/stock      8244         0.445      0.512         0.043          0.615  0.210           0.011       0.063    0.172   -0.109            19.613
+
+--- por activo (señales vs base rate del mismo activo) ---
+asset  n_sig  success  base   edge  avg_R  avg_ret_3m
+  EWZ     10    0.500 0.340  0.160  0.684       0.017
+ VIST     12    0.667 0.587  0.079  0.331       0.104
+ MELI      9    0.444 0.385  0.059  0.104       0.021
+  BNB     14    0.571 0.566  0.006  0.171       0.038
+ NVDA     11    0.545 0.574 -0.028  0.293       0.063
+   KO     10    0.300 0.332 -0.032  0.435       0.036
+ META      9    0.444 0.479 -0.034  0.197      -0.040
+ MSFT      9    0.222 0.260 -0.038 -0.115      -0.032
+ YPFD     12    0.500 0.542 -0.042  0.006       0.214
+  JNJ      5    0.400 0.469 -0.069  0.538       0.092
+ AAPL     10    0.400 0.480 -0.080  0.166       0.020
+  BTC      9    0.444 0.526 -0.082 -0.075      -0.006
+ PAMP      6    0.333 0.474 -0.140 -0.332       0.147
+  NOW      9    0.111 0.351 -0.240 -0.721      -0.061
+  ETH      4    0.250 0.529 -0.279 -0.587      -0.263
+GOOGL      5    0.200 0.525 -0.325 -0.520      -0.032
+  IBM      4    0.000 0.436 -0.436 -1.000      -0.138
+
+--- por régimen en el momento de la señal ---
+           n  success_rate  loss_rate  timeout_rate  hit10_no_stop  avg_R  expectancy_pct  avg_ret_3m  avg_mfe  avg_mae  avg_bars_to_exit
+set                                                                                                                                      
+NEUTRAL    1         1.000      0.000         0.000          1.000  1.216           0.100      -0.047    0.162   -0.073            11.000
+RISK_ON  147         0.408      0.571         0.020          0.524  0.052          -0.000       0.029    0.159   -0.141            17.531
+
+[BT] señales sin 3 meses de datos por delante (excluidas del KPI): 14
+
+[BT] detalle -> /Users/manuercolini/dev/investing/out/signals.csv

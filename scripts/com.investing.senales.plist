@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Alternativa LOCAL al scheduler de GitHub Actions. Usar UNA de las dos, no las
+  dos: si corren ambas, salen alertas duplicadas.
+
+  Ventaja de launchd: no necesitás repo público ni secrets en la nube.
+  Desventaja: solo corre si la Mac está prendida. launchd recupera la corrida
+  perdida al despertar, pero si la máquina estuvo apagada todo el día, no.
+
+  Instalar:
+    1. Editá las rutas de abajo y las variables DISCORD_WEBHOOK_*
+    2. cp scripts/com.investing.senales.plist ~/Library/LaunchAgents/
+    3. launchctl load  ~/Library/LaunchAgents/com.investing.senales.plist
+    4. launchctl start com.investing.senales      # probarlo ya mismo
+
+  Ver logs:      tail -f /tmp/investing-senales.log
+  Desinstalar:   launchctl unload ~/Library/LaunchAgents/com.investing.senales.plist
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.investing.senales</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/python3</string>
+        <string>-m</string>
+        <string>bot.run_daily</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/TU_USUARIO/dev/investing</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PYTHONPATH</key>
+        <string>/Users/TU_USUARIO/dev/investing</string>
+        <key>DISCORD_WEBHOOK_ACCIONES</key>
+        <string>PEGAR_ACA</string>
+        <key>DISCORD_WEBHOOK_CRIPTO</key>
+        <string>PEGAR_ACA</string>
+        <key>DISCORD_WEBHOOK_REGIMEN</key>
+        <string>PEGAR_ACA</string>
+        <key>DISCORD_WEBHOOK_REPORTE</key>
+        <string>PEGAR_ACA</string>
+    </dict>
+
+    <!-- 18:30 hora local. Ajustar si no estás en horario del este de EE.UU.:
+         tiene que ser después del cierre del mercado. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key><integer>18</integer>
+        <key>Minute</key><integer>30</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/investing-senales.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/investing-senales.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

@@ -1,0 +1,53 @@
+# Runtime config for the daily signal job.
+# Webhooks come from env vars, never from this file:
+#   DISCORD_WEBHOOK_ACCIONES / _CRIPTO / _REGIMEN / _REPORTE
+
+equities:
+  # 15 names. IRSA is intentionally absent: the IRS ADR trades ~$694k/day,
+  # far below the $5M liquidity floor used in the backtest.
+  watchlist:
+    - {alias: MELI,  symbol: MELI}
+    - {alias: MSFT,  symbol: MSFT}
+    - {alias: VIST,  symbol: VIST}
+    - {alias: NVDA,  symbol: NVDA}
+    - {alias: JNJ,   symbol: JNJ}
+    - {alias: META,  symbol: META}
+    - {alias: YPFD,  symbol: YPF}
+    - {alias: PAMP,  symbol: PAM}
+    - {alias: NOW,   symbol: NOW}
+    - {alias: KO,    symbol: KO}
+    - {alias: EWZ,   symbol: EWZ}
+    - {alias: IBM,   symbol: IBM}
+    - {alias: GOOGL, symbol: GOOGL}
+    - {alias: AAPL,  symbol: AAPL}
+  benchmark: SPY
+  min_conditions: 5          # validated tier: P(up in 10d) = 63.9% vs 55.7% base
+  cooldown_bars: 10
+  hold_bars: 21              # exit rule with the best edge vs its own base rate
+
+crypto:
+  watchlist:
+    - {alias: BTC, symbol: BTC-USD}
+    - {alias: ETH, symbol: ETH-USD}
+    - {alias: BNB, symbol: BNB-USD}
+  rank_window: 252
+  rebalance_band: 0.10       # only alert when target weight moves more than this
+  weight_min: 0.0
+  weight_max: 2.0
+
+regime:
+  proxy: SPY
+
+# P(price up in 10 sessions) measured on the watchlist, 2010-2026.
+# Used only to annotate the alert, never to decide.
+calibration:
+  base_rate_10d: 0.557
+  by_conditions:
+    5: {p_up: 0.639, ci: [0.585, 0.694], oos: 0.607, n: 294}
+    6: {p_up: 0.679, ci: [0.590, 0.768], oos: 0.622, n: 106}
+
+history_days: 900            # enough for EMA200 + 252d percentile ranks
+
+# Public URL of docs/index.html. Every alert links to it so anyone in the
+# server can read why the signal exists without asking. Leave empty to omit.
+docs_url: ""                 # p.ej. https://tuusuario.github.io/investing/

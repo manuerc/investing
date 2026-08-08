@@ -1,0 +1,51 @@
+# Watchlist. `symbol` is the yfinance ticker actually used for OHLCV.
+# `alias` is how the user refers to it.
+#
+# ARS-listed tickers (YPFD / PAMP / IRSA on BYMA) are mapped to their USD ADRs
+# so that every return in the backtest is a real USD return, not an ARS return
+# contaminated by devaluation. Same underlying company, USD-denominated.
+
+universe:
+  - {alias: MELI,  symbol: MELI,    class: stock,  benchmark: SPY}
+  - {alias: MSFT,  symbol: MSFT,    class: stock,  benchmark: SPY}
+  - {alias: VIST,  symbol: VIST,    class: stock,  benchmark: SPY}
+  - {alias: NVDA,  symbol: NVDA,    class: stock,  benchmark: SPY}
+  - {alias: JNJ,   symbol: JNJ,     class: stock,  benchmark: SPY}
+  - {alias: META,  symbol: META,    class: stock,  benchmark: SPY}
+  - {alias: YPFD,  symbol: YPF,     class: stock,  benchmark: SPY}   # ADR NYSE
+  - {alias: PAMP,  symbol: PAM,     class: stock,  benchmark: SPY}   # ADR NYSE
+  - {alias: NOW,   symbol: NOW,     class: stock,  benchmark: SPY}
+  - {alias: KO,    symbol: KO,      class: stock,  benchmark: SPY}
+  - {alias: EWZ,   symbol: EWZ,     class: stock,  benchmark: SPY}
+  - {alias: IBM,   symbol: IBM,     class: stock,  benchmark: SPY}
+  - {alias: IRSA,  symbol: IRS,     class: stock,  benchmark: SPY}   # ADR NYSE
+  - {alias: GOOGL, symbol: GOOGL,   class: stock,  benchmark: SPY}
+  - {alias: AAPL,  symbol: AAPL,    class: stock,  benchmark: SPY}
+  - {alias: BTC,   symbol: BTC-USD, class: crypto, benchmark: BTC-USD}
+  - {alias: ETH,   symbol: ETH-USD, class: crypto, benchmark: BTC-USD}
+  - {alias: BNB,   symbol: BNB-USD, class: crypto, benchmark: BTC-USD}
+
+regime:
+  stock_proxy: SPY
+  crypto_proxy: BTC-USD
+
+backtest:
+  warmup_start: "2016-01-01"   # weekly EMA200 needs ~4y of history to be warm at signal_start
+  signal_start: "2024-01-01"
+  signal_end: "2026-08-08"
+  horizon_bars_stock: 63        # ~3 months of trading days
+  horizon_bars_crypto: 91       # ~3 months of calendar days (crypto trades daily)
+  target_pct: 0.10              # user definition of success: +10% in USD
+  stop_atr_mult: 2.5
+  cooldown_bars: 10
+
+thresholds:
+  watching: 50
+  setup: 70
+  exit_hysteresis: 55
+
+liquidity:
+  min_dollar_vol_stock: 5_000_000
+  min_dollar_vol_crypto: 20_000_000
+
+playbooks_enabled: [A, B, C]
