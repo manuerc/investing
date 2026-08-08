@@ -1,5 +1,5 @@
 """One-shot Discord server setup. Creates categories, channels, permissions,
-the @señales role, and posts + pins every explanatory message.
+the @alertas opt-in role, and posts + pins every explanatory message.
 
 The bot token never leaves this machine: it is read from .env or the
 environment and used only against Discord's own API.
@@ -65,7 +65,10 @@ STRUCTURE = [
 WEBHOOK_CHANNELS = {"acciones": "DISCORD_WEBHOOK_ACCIONES", "cripto": "DISCORD_WEBHOOK_CRIPTO",
                     "regimen": "DISCORD_WEBHOOK_REGIMEN", "reporte": "DISCORD_WEBHOOK_REPORTE"}
 
-ROLE_NAME = "señales"
+# NOT "señales": Discord auto-creates a managed role named after the bot when
+# it is invited, and managed roles cannot be assigned to humans. A separate,
+# clearly-named role avoids two near-identical entries in the role list.
+ROLE_NAME = "alertas"
 
 
 # --------------------------------------------------------------------------- api
@@ -147,14 +150,17 @@ def resolve_guild(dc: Discord, given: str | None) -> tuple[str, str]:
 
 def ensure_role(dc: Discord, gid: str, existing: list[dict]) -> str:
     for r in existing:
-        if r["name"] == ROLE_NAME:
+        # skip managed roles (the bot's own integration role) and match loosely
+        if r.get("managed"):
+            continue
+        if r["name"].strip().lower() == ROLE_NAME:
             print(f"  rol @{ROLE_NAME} ya existe")
             return r["id"]
     print(f"  creando rol @{ROLE_NAME}")
     r = dc.post(f"/guilds/{gid}/roles",
                 {"name": ROLE_NAME, "mentionable": True, "permissions": "0",
                  "color": 0x5865F2,
-                 "reason": "rol opcional para recibir ping en las señales"})
+                 "reason": "rol opcional para que los miembros reciban ping en las señales"})
     return r["id"]
 
 
@@ -177,6 +183,27 @@ def ensure_channel(dc: Discord, gid: str, existing: dict[str, dict], name: str,
         }]
     print(f"  creando: {name}" + ("  (solo lectura)" if readonly else ""))
     return dc.post(f"/guilds/{gid}/channels", body)["id"], True
+
+
+def link_channels(embed: dict, ids: dict[str, str]) -> dict:
+    """Swap {{canal}} placeholders for real <#id> mentions.
+
+    Discord only renders a channel link from its numeric id, so the text is
+    written with placeholders and resolved here, once the channels exist.
+    """
+    def sub(text: str) -> str:
+        for name, cid in ids.items():
+            text = text.replace("{{" + name + "}}", f"<#{cid}>")
+        return text
+
+    e = dict(embed)
+    for key in ("title", "description"):
+        if e.get(key):
+            e[key] = sub(e[key])
+    if e.get("fields"):
+        e["fields"] = [{**f, "name": sub(f["name"]), "value": sub(f["value"])}
+                       for f in e["fields"]]
+    return e
 
 
 def post_and_pin(dc: Discord, channel_id: str, embed: dict) -> None:
@@ -214,7 +241,7 @@ def intro_embeds(docs_url: str | None) -> dict[str, list[dict]]:
                  "inline": False},
                 {"name": "📋 Las reglas del servidor",
                  "value": "**1.** Los canales de señales son de solo lectura. Para comentar "
-                          "una alerta abrí un hilo sobre ella o escribí en <#charla>.\n"
+                          "una alerta abrí un hilo sobre ella o escribí en {{charla}}.\n"
                           "**2.** No se piden ni se dan recomendaciones personalizadas. "
                           "Nadie acá sabe tu situación financiera.\n"
                           "**3.** Prohibido promocionar otros grupos, cursos, brokers o "
@@ -223,8 +250,8 @@ def intro_embeds(docs_url: str | None) -> dict[str, list[dict]]:
                           "está abierta justamente para eso.",
                  "inline": False},
                 {"name": "🔔 Cómo configurar las notificaciones",
-                 "value": "Recomendado: **todos los mensajes** en <#regimen> y <#acciones>, "
-                          "**silenciado** en <#reporte>. Click derecho en cada canal → "
+                 "value": "Recomendado: **todos los mensajes** en {{regimen}} y {{acciones}}, "
+                          "**silenciado** en {{reporte}}. Click derecho en cada canal → "
                           "*Notificaciones*.",
                  "inline": False},
             ],
@@ -382,14 +409,15 @@ def main() -> None:
             print(f"  {name}: ya existía, no se publica de nuevo")
             continue
         for e in embeds:
-            post_and_pin(dc, created[name], e)
+            post_and_pin(dc, created[name], link_channels(e, created))
         print(f"  {name}: {len(embeds)} mensaje(s) publicado(s) y fijado(s)")
 
     for name, embed in welcome.items():
         if name not in fresh:
             print(f"  {name}: ya existía, no se publica de nuevo")
             continue
-        post_and_pin(dc, created[name], notifier_ready(embed, docs_url))
+        post_and_pin(dc, created[name],
+                     link_channels(notifier_ready(embed, docs_url), created))
         print(f"  {name}: bienvenida publicada y fijada")
 
     if args.webhooks:
