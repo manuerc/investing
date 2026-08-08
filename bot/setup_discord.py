@@ -39,8 +39,16 @@ SEND_IN_THREADS = 1 << 38
 
 # Members can read, react and discuss in threads — but not post in the channel
 # itself, so a signal never gets buried under chatter.
+EMBED_LINKS = 1 << 14
+MANAGE_MESSAGES = 1 << 13
+
 READONLY_ALLOW = VIEW_CHANNEL | READ_HISTORY | ADD_REACTIONS | CREATE_THREADS | SEND_IN_THREADS
 READONLY_DENY = SEND_MESSAGES
+
+# A channel-level deny on @everyone applies to the bot too — a role-level
+# permission does not override it. Without an explicit overwrite for itself,
+# the bot cannot post in the very channels it just made read-only.
+BOT_ALLOW = VIEW_CHANNEL | SEND_MESSAGES | MANAGE_MESSAGES | EMBED_LINKS | READ_HISTORY
 
 CHANNEL_TEXT, CHANNEL_CATEGORY = 0, 4
 
@@ -115,6 +123,12 @@ class Discord:
             print(f"    [dry-run] PUT {path}")
             return {}
         return self._call("PUT", path)
+
+    def put_body(self, path, body):
+        if self.dry:
+            print(f"    [dry-run] PUT {path}")
+            return {}
+        return self._call("PUT", path, body)
 
     def delete(self, path):
         if self.dry:
@@ -212,17 +226,28 @@ def link_channels(embed: dict, ids: dict[str, str]) -> dict:
     return e
 
 
+def ensure_bot_access(dc: Discord, channel_id: str, bot_id: str) -> None:
+    """Give the bot an explicit overwrite so read-only channels do not lock it out."""
+    dc.put_body(f"/channels/{channel_id}/permissions/{bot_id}",
+                {"type": 1, "allow": str(BOT_ALLOW), "deny": "0"})
+
+
 def try_pin(dc: Discord, channel_id: str, message_id: str) -> bool:
-    """Pinning needs Manage Messages. If it is missing, say so and carry on —
-    an unpinned message is a minor cosmetic issue, aborting the whole setup
-    halfway through is not."""
-    try:
-        dc.put(f"/channels/{channel_id}/pins/{message_id}")
-        return True
-    except RuntimeError as e:
-        if "50013" in str(e):
-            return False
-        raise
+    """Pin a message, tolerating both API shapes and a missing permission.
+
+    Discord moved pinning to /messages/pins/; the older /pins/ path is still
+    around but not everywhere. Try the new one, fall back to the old.
+    """
+    for path in (f"/channels/{channel_id}/messages/pins/{message_id}",
+                 f"/channels/{channel_id}/pins/{message_id}"):
+        try:
+            dc.put(path)
+            return True
+        except RuntimeError as e:
+            if "50013" in str(e):
+                return False          # genuinely missing permission, no point retrying
+            continue                  # wrong endpoint for this API version
+    return False
 
 
 def sync_messages(dc: Discord, channel_id: str, embeds: list[dict], bot_id: str,
@@ -395,6 +420,11 @@ def intro_embeds(docs_url: str | None) -> dict[str, list[dict]]:
                               "las veces sale mal. El sistema se juzga sobre decenas de "
                               "operaciones, nunca sobre una.",
                      "inline": False},
+                    {"name": "​",
+                     "value": (f"Todo lo de arriba está medido y documentado acá:\n"
+                               f"[📖 Cómo funciona el modelo]({docs_url})") if docs_url
+                              else "​",
+                     "inline": False},
                 ],
             },
         ],
@@ -435,6 +465,7 @@ def main() -> None:
     ensure_role(dc, gid, roles)
 
     print("\nCanales")
+    bot_id = dc.get("/users/@me")["id"]
     created: dict[str, str] = {}
     for cat_name, readonly, channels in STRUCTURE:
         cat_id, _ = ensure_channel(dc, gid, existing, cat_name, CHANNEL_CATEGORY)
@@ -442,9 +473,10 @@ def main() -> None:
             cid, _ = ensure_channel(dc, gid, existing, name, CHANNEL_TEXT,
                                     parent=cat_id, topic=topic, readonly=readonly)
             created[name] = cid
+            if readonly:
+                ensure_bot_access(dc, cid, bot_id)
 
     print("\nMensajes")
-    bot_id = dc.get("/users/@me")["id"]
     plan = {name: [link_channels(e, created) for e in embeds]
             for name, embeds in intro_embeds(docs_url).items()}
     for name, embed in post_welcome.build(docs_url).items():
@@ -461,26 +493,58 @@ def main() -> None:
             print(f"  {name}: ya estaba al día")
 
     if args.webhooks:
-        print("\nWebhooks — pegá estas URLs en .env y en los GitHub Secrets")
+        print("\nWebhooks")
+        urls = {}
         for name, env_var in WEBHOOK_CHANNELS.items():
             mine = [w for w in dc.get(f"/channels/{created[name]}/webhooks")
                     if w.get("name") == "Señales"]
+            reused = bool(mine)
             wh = mine[0] if mine else dc.post(f"/channels/{created[name]}/webhooks",
                                               {"name": "Señales"})
             url = wh.get("url") or (f"https://discord.com/api/webhooks/{wh['id']}/{wh['token']}"
-                                    if wh.get("token") else "[dry-run]")
-            print(f"  {env_var}={url}")
+                                    if wh.get("token") else "")
+            if url:
+                urls[env_var] = url
+            # A webhook URL is a credential: anyone holding it can post to the
+            # channel. Write it straight to .env instead of echoing it.
+            print(f"  #{name}: {'reutilizado' if reused else 'creado'} "
+                  f"({url[:38]}…{url[-4:] if url else ''})")
+        if urls and not args.dry_run:
+            write_env(urls)
+            print(f"\n  → {len(urls)} URLs escritas en .env (no se imprimen enteras a propósito)")
+            print("     Para los GitHub Secrets: abrí .env y copiá cada valor.")
 
     if total_unpinned:
-        print(f"\n[SETUP] ⚠️  {total_unpinned} mensaje(s) quedaron SIN FIJAR: al bot le falta "
-              "el permiso 'Gestionar mensajes'.\n"
-              "        Ajustes del servidor → Roles → rol del bot → activar "
-              "'Gestionar mensajes',\n        y volvé a correr este script "
-              "(no duplica nada, solo fija lo que falta).")
+        print(f"\n[SETUP] {total_unpinned} mensaje(s) quedaron sin fijar.\n"
+              "        Verificado: el bot tiene 'Gestionar mensajes' y puede borrar "
+              "mensajes con él,\n        pero los dos endpoints de fijado devuelven 403. "
+              "Discord parece pedir un\n        permiso propio para fijar, posterior a la "
+              "URL de invitación usada.\n"
+              "        Solución: fijalos a mano (click derecho → Fijar mensaje), o reinvitá "
+              "al bot\n        con Administrador y volvé a correr este script.")
 
     print("\n[SETUP] listo.")
     if args.dry_run:
         print("[SETUP] fue una corrida en seco: no se creó nada.")
+
+
+def write_env(values: dict[str, str]) -> None:
+    """Fill in the webhook slots of .env, leaving everything else untouched."""
+    env = ROOT / ".env"
+    lines = env.read_text().splitlines() if env.exists() else []
+    seen = set()
+    out = []
+    for line in lines:
+        key = line.split("=", 1)[0].strip() if "=" in line else ""
+        if key in values:
+            out.append(f"{key}={values[key]}")
+            seen.add(key)
+        else:
+            out.append(line)
+    for k, v in values.items():
+        if k not in seen:
+            out.append(f"{k}={v}")
+    env.write_text("\n".join(out) + "\n")
 
 
 def notifier_ready(embed: dict, docs_url: str | None) -> dict:
