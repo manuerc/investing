@@ -434,6 +434,26 @@ Sostienen la posición 42 y 51 ruedas: todo ese retorno es plazo, no señal. Con
 de su propio plazo el edge es cero o negativo. Cualquier comparación de salidas que no
 normalice por duración elige exactamente la regla equivocada.</p>
 
+<h3>Cuándo se compra y se vende, exactamente</h3>
+
+<p>Todo el sistema opera sobre <b>velas cerradas</b>, y eso define los tiempos de ejecución:</p>
+
+<table>
+  <thead><tr><th>Momento</th><th>Qué pasa</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Cierre del día T</td><td>El bot corre 22:30 UTC, después del cierre de Nueva York, y evalúa las condiciones sobre la vela ya cerrada.</td></tr>
+    <tr><td class="k">Apertura del día T+1</td><td><b>Se compra.</b> Nunca hay que operar a las apuradas: la señal se publica de noche y se ejecuta a la mañana siguiente.</td></tr>
+    <tr><td class="k">Cierre del día S</td><td>El precio cierra por encima de su media de 20 días. El bot lo detecta esa noche y avisa.</td></tr>
+    <tr><td class="k">Apertura del día S+1</td><td><b>Se vende.</b> Igual que en la entrada: la condición solo se conoce después del cierre.</td></tr>
+  </tbody>
+</table>
+
+<p class="note"><b>Por qué importa medirlo así.</b> Una primera versión del backtest vendía
+al mismo cierre que dispara la condición, lo cual es imposible en la práctica. Corregido a
+la apertura siguiente el retorno pasa de +1,53% a <b>+1,58%</b>: la deriva nocturna de las
+acciones juega a favor, así que la medición anterior era conservadora. Los números de esta
+página ya usan la ejecución realista.</p>
+
 <p class="note"><b>Lo que no funciona.</b> Los stops dinámicos empeoran todo: trailing de
 2,5×ATR baja los aciertos al 40%, y objetivo +5% con stop −3% al 43%. Probamos también
 variantes híbridas —tope de plazo, mínimo de ruedas, media combinada con objetivo en ATR—

@@ -115,7 +115,8 @@ def advance_positions(con, latest: dict[str, dict]) -> list[dict]:
     weekend, holiday or outage) never shifts the exit date.
     """
     due = []
-    for row in con.execute("SELECT * FROM positions WHERE status='open'").fetchall():
+    for row in con.execute(
+            "SELECT * FROM positions WHERE status IN ('open','pending_exit')").fetchall():
         cur = latest.get(row["asset"])
         if not cur:
             continue
@@ -137,20 +138,40 @@ def advance_positions(con, latest: dict[str, dict]) -> list[dict]:
 
         # Exit rule: first close back above the 20-day mean — the reversion is
         # done. `hold_bars` is only a backstop cap for trades that never revert.
-        reverted = next((b for b in after if b.get("above20")), None)
+        #
+        # The condition is only knowable AFTER the close, so the sale actually
+        # happens at the NEXT session's open. The position closes once that open
+        # exists; while it does not, it is flagged pending so the alert can say
+        # "sell at tomorrow's open" instead of quoting a price you cannot get.
+        trigger_i = next((i for i, b in enumerate(after) if b.get("above20")), None)
         timed_out = held >= row["hold_bars"]
-        if reverted or timed_out:
-            exit_bar = reverted or after[-1]
-            pnl = exit_bar["close"] / entry - 1 if entry else None
-            bars_held = (after.index(exit_bar) + 1) if reverted else held
+        by_time = trigger_i is None and timed_out
+        if by_time:
+            trigger_i = len(after) - 1
+        if trigger_i is not None:
+            fill = after[trigger_i + 1] if trigger_i + 1 < len(after) else None
+            motivo = "tope de plazo" if by_time else "vuelta a la media"
+            if fill is None:
+                con.execute("UPDATE positions SET status='pending_exit' WHERE id=?",
+                            (row["id"],))
+                if row["status"] != "pending_exit":
+                    px = after[trigger_i]["close"]
+                    due.append({"asset": row["asset"], "signal_date": row["signal_date"],
+                                "entry_price": entry, "exit_price": px,
+                                "pnl_pct": (px / entry - 1) if entry else None,
+                                "bars_held": trigger_i + 1, "pendiente": True,
+                                "motivo": motivo})
+                continue
+            exit_bar = {"close": fill["open"], "date": fill["date"]}
+            pnl = fill["open"] / entry - 1 if entry else None
             con.execute(
                 "UPDATE positions SET status='closed', exit_price=?, exit_date=?, pnl_pct=?,"
                 " bars_held=? WHERE id=?",
-                (exit_bar["close"], exit_bar["date"], pnl, bars_held, row["id"]))
-            due.append({"asset": row["asset"], "signal_date": row["signal_date"],
-                        "entry_price": entry, "exit_price": exit_bar["close"],
-                        "pnl_pct": pnl, "bars_held": bars_held,
-                        "motivo": "vuelta a la media" if reverted else "tope de plazo"})
+                (exit_bar["close"], exit_bar["date"], pnl, trigger_i + 1, row["id"]))
+            if row["status"] != "pending_exit":      # alert not sent yet
+                due.append({"asset": row["asset"], "signal_date": row["signal_date"],
+                            "entry_price": entry, "exit_price": exit_bar["close"],
+                            "pnl_pct": pnl, "bars_held": trigger_i + 1, "motivo": motivo})
     con.commit()
     return due
 

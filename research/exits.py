@@ -54,6 +54,9 @@ def build_paths(min_conditions: int = 5, maxbars: int = MAXBARS) -> pd.DataFrame
                 "rsi14_0": r14[i], "atr_rank": r.get("atr_pct_rank252", np.nan),
                 "high": h[j:j + maxbars], "low": l[j:j + maxbars],
                 "close": c[j:j + maxbars], "ema20": e20[j:j + maxbars],
+                # open of the NEXT bar: the price you can actually sell at once
+                # a close-based condition has triggered
+                "next_open": o[j + 1:j + maxbars + 1],
                 "rsi14": r14[j:j + maxbars], "atr": a14[i],
             })
     return pd.DataFrame(rows)

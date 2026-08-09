@@ -131,20 +131,36 @@ def regime_embed(sig, changes_this_year: int = 0) -> dict:
 
 
 def exit_embed(pos: dict) -> dict:
+    """Exit alert.
+
+    `pendiente` means the condition triggered on today's close, so the sale
+    happens at tomorrow's open — the number shown is an estimate, not a fill.
+    """
     pnl = pos["pnl_pct"]
+    pend = bool(pos.get("pendiente"))
+    motivo = ("volvió sobre su media de 20 días"
+              if pos.get("motivo") == "vuelta a la media"
+              else f"tope de plazo, {pos['bars_held']} ruedas")
+    if pend:
+        desc = ("**Vendé en la apertura de mañana.** Resultado estimado con el cierre "
+                "de hoy: " + (_pct(pnl) if pnl is not None else "—"))
+        foot = ("la condición se evalúa sobre la vela cerrada, así que la venta va "
+                "al open siguiente")
+    else:
+        desc = "Resultado " + ("**" + _pct(pnl) + "**" if pnl is not None else "—")
+        foot = "vendido en la apertura, como indica la regla"
     return {
-        "title": (f"🔵 SALIDA · {pos['asset']} · "
-                  + ("volvió sobre su media de 20 días" if pos.get("motivo") == "vuelta a la media"
-                     else f"tope de plazo, {pos['bars_held']} ruedas")),
-        "description": ("Resultado " + ("**" + _pct(pnl) + "**" if pnl is not None else "—")),
+        "title": f"🔵 SALIDA · {pos['asset']} · {motivo}",
+        "description": desc,
         "color": COLOR["exit"],
         "fields": [
             {"name": "Entrada", "value": f"${_num(pos['entry_price'])}", "inline": True},
-            {"name": "Cierre actual", "value": f"${_num(pos['exit_price'])}", "inline": True},
+            {"name": "Cierre de hoy" if pend else "Salida",
+             "value": f"${_num(pos['exit_price'])}", "inline": True},
             {"name": "Señal", "value": pos["signal_date"], "inline": True},
             {"name": "Duración", "value": f"{pos['bars_held']} ruedas", "inline": True},
         ],
-        "footer": {"text": "la reversión se completó: el precio volvió a su media"},
+        "footer": {"text": foot},
     }
 
 
