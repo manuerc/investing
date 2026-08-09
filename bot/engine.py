@@ -161,6 +161,8 @@ def scan_equities(cfg: dict, as_of: str | None = None) -> tuple[list[EquitySigna
         detail, uptrend = equity_conditions(df, mkt)
         count = sum(detail.values()) if uptrend else -1
         a14 = atr(df["high"], df["low"], df["close"], 14)
+        e20 = ema(df["close"], 20)
+        above20 = (df["close"] > e20).fillna(False)
 
         row = {
             "asset": item["alias"], "conditions": count, "uptrend": uptrend,
@@ -169,9 +171,12 @@ def scan_equities(cfg: dict, as_of: str | None = None) -> tuple[list[EquitySigna
             "detail": detail,
             # recent sessions so the exit counter measures REAL bars elapsed,
             # not how many times the job happened to run
-            "bars": [{"date": d.date().isoformat(), "open": float(o), "close": float(cl)}
-                     for d, o, cl in zip(df.index[-120:], df["open"].iloc[-120:],
-                                         df["close"].iloc[-120:])],
+            # `above20` drives the exit: the trade closes once price has
+            # reverted back above its own 20-day mean.
+            "bars": [{"date": d.date().isoformat(), "open": float(o), "close": float(cl),
+                      "above20": bool(a)}
+                     for d, o, cl, a in zip(df.index[-120:], df["open"].iloc[-120:],
+                                            df["close"].iloc[-120:], above20.iloc[-120:])],
         }
         status.append(row)
 

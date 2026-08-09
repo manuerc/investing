@@ -51,9 +51,12 @@ def build(docs_url: str | None) -> dict[str, dict]:
                           "el silencio también es información.",
                  "inline": False},
                 {"name": "La salida",
-                 "value": "A las **21 ruedas** de la entrada, por plazo cumplido. "
-                          "Probamos stops dinámicos y empeoran el resultado — la "
-                          "estrategia necesita aire para funcionar.",
+                 "value": "Cuando el precio **vuelve a cerrar sobre su media de 20 días**: "
+                          "la reversión se completó y no hay nada más que esperar. Dura "
+                          "unas 11 ruedas en promedio.\nSe eligió probando 18 reglas sobre "
+                          "71 acciones ajenas al watchlist: le gana al plazo fijo en 13 de "
+                          "16 años, con 78% de aciertos contra 62%. Los stops dinámicos "
+                          "empeoran el resultado.",
                  "inline": False},
                 {"name": "Importante", "value": DISCLAIMER, "inline": False},
             ],
@@ -121,7 +124,7 @@ def build(docs_url: str | None) -> dict[str, dict]:
                  "inline": False},
                 {"name": "Paciencia al principio",
                  "value": "Los primeros meses va a estar casi vacío: la primera operación cierra "
-                          "recién 21 ruedas después de la primera señal. Es lo correcto — "
+                          "unas 11 ruedas después de la primera señal. Es lo correcto — "
                           "inventar historia sería hacer trampa.",
                  "inline": False},
             ],

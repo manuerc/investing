@@ -135,14 +135,22 @@ def advance_positions(con, latest: dict[str, dict]) -> list[dict]:
         con.execute("UPDATE positions SET bars_held=?, last_bar_date=? WHERE id=?",
                     (held, cur["bar_date"], row["id"]))
 
-        if held >= row["hold_bars"]:
-            pnl = cur["close"] / entry - 1 if entry else None
+        # Exit rule: first close back above the 20-day mean — the reversion is
+        # done. `hold_bars` is only a backstop cap for trades that never revert.
+        reverted = next((b for b in after if b.get("above20")), None)
+        timed_out = held >= row["hold_bars"]
+        if reverted or timed_out:
+            exit_bar = reverted or after[-1]
+            pnl = exit_bar["close"] / entry - 1 if entry else None
+            bars_held = (after.index(exit_bar) + 1) if reverted else held
             con.execute(
-                "UPDATE positions SET status='closed', exit_price=?, exit_date=?, pnl_pct=?"
-                " WHERE id=?", (cur["close"], cur["bar_date"], pnl, row["id"]))
+                "UPDATE positions SET status='closed', exit_price=?, exit_date=?, pnl_pct=?,"
+                " bars_held=? WHERE id=?",
+                (exit_bar["close"], exit_bar["date"], pnl, bars_held, row["id"]))
             due.append({"asset": row["asset"], "signal_date": row["signal_date"],
-                        "entry_price": entry, "exit_price": cur["close"],
-                        "pnl_pct": pnl, "bars_held": held})
+                        "entry_price": entry, "exit_price": exit_bar["close"],
+                        "pnl_pct": pnl, "bars_held": bars_held,
+                        "motivo": "vuelta a la media" if reverted else "tope de plazo"})
     con.commit()
     return due
 

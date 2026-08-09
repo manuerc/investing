@@ -45,8 +45,12 @@ se gradúa contando cuántas de seis condiciones coinciden.
 los 15 activos. Las reglas se calibraron sobre 82 activos ajenos al watchlist y se aplican
 sin reajustar nada.
 
-**No hay señal de venta.** Los indicadores de sobrecompra no anticipan caídas en acciones
-de calidad: la salida es a plazo fijo de 21 ruedas. Está explicado en la documentación.
+**La salida** es cuando el precio vuelve a cerrar sobre su media de 20 días — la reversión
+se completó. Elegida entre 18 reglas probadas sobre 71 activos ajenos al watchlist: le gana
+al plazo fijo en 13 de 16 años, con 78% de aciertos contra 62%.
+
+**No hay señal de venta por sobrecompra.** Los indicadores de sobrecompra no anticipan
+caídas en acciones de calidad. Está explicado en la documentación.
 
 ---
 

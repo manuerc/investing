@@ -403,35 +403,47 @@ coherente: son empresas de calidad, y las caídas de empresas de calidad reviert
 
 <h3>La salida</h3>
 
-<p>Probé cinco reglas de salida. La comparación honesta no es cuál da más retorno, sino cuál da
-más retorno <b>respecto del base rate del mismo plazo</b> — si no, "aguantar más tiempo" gana
-siempre en un mercado alcista.</p>
+<p>La primera versión de esta regla se eligió mirando solo las 15 acciones del watchlist:
+338 operaciones de nombres correlacionados. Es el mismo error que el diseño de la entrada
+estaba pensado para evitar. Se rehizo con la disciplina correcta: <b>18 reglas probadas sobre 71 activos ajenos</b>, con el watchlist reservado para validar.</p>
+
+<p>Primero, cuánto margen hay. Sobre 3.203 señales, la suba máxima alcanzada en las 63
+ruedas siguientes promedia <b>+12,6%</b> y capturábamos <b>+1,8%</b>: el 14%. Había lugar
+para mejorar.</p>
 
 <table>
-  <thead><tr><th>Salida</th><th class="n">Retorno señal</th><th class="n">Base mismo plazo</th><th class="n">Edge real</th></tr></thead>
+  <thead><tr><th>Regla</th><th class="n">Retorno</th><th class="n">Base<br>mismo plazo</th><th class="n">Edge</th><th class="n">Acierto</th><th class="n">Ruedas</th><th class="n">Ret./rueda</th></tr></thead>
   <tbody>
-    <tr><td class="k">5 ruedas</td><td class="n">+1,1%</td><td class="n">+0,4%</td><td class="n">+0,6 pp</td></tr>
-    <tr><td class="k">10 ruedas</td><td class="n">+1,7%</td><td class="n">+0,9%</td><td class="n">+0,8 pp</td></tr>
-    <tr class="hi"><td class="k">21 ruedas</td><td class="n">+3,0%</td><td class="n">+1,9%</td><td class="n">+1,1 pp</td></tr>
-    <tr><td class="k">RSI(14) &gt; 70</td><td class="n">+6,2%</td><td class="n">+5,8%</td><td class="n">+0,4 pp</td></tr>
-    <tr><td class="k">Trailing 2,5×ATR</td><td class="n">+1,3%</td><td class="n">—</td><td class="n">40% aciertos</td></tr>
+    <tr class="hi"><td class="k">Vuelta a la media (EMA20)</td><td class="n">+1,53%</td><td class="n">+0,80%</td><td class="n"><b>+0,73 pp</b></td><td class="n"><b>78,4%</b></td><td class="n">11,1</td><td class="n"><b>0,0014</b></td></tr>
+    <tr><td class="k">RSI(14) &gt; 60</td><td class="n">+2,91%</td><td class="n">+2,26%</td><td class="n">+0,65 pp</td><td class="n">77,4%</td><td class="n">30,9</td><td class="n">0,0009</td></tr>
+    <tr><td class="k">Objetivo 2 ATR</td><td class="n">+2,16%</td><td class="n">+1,68%</td><td class="n">+0,48 pp</td><td class="n">85,5%</td><td class="n">23,2</td><td class="n">0,0009</td></tr>
+    <tr><td class="k">21 ruedas fijas <i>(anterior)</i></td><td class="n">+1,74%</td><td class="n">+1,53%</td><td class="n">+0,21 pp</td><td class="n">61,6%</td><td class="n">21,0</td><td class="n">0,0008</td></tr>
+    <tr><td class="k">42 ruedas fijas</td><td class="n">+3,06%</td><td class="n">+3,06%</td><td class="n">0,00 pp</td><td class="n">63,2%</td><td class="n">42,0</td><td class="n">0,0007</td></tr>
+    <tr><td class="k">RSI(14) &gt; 70</td><td class="n">+3,69%</td><td class="n">+3,71%</td><td class="n">−0,02 pp</td><td class="n">67,7%</td><td class="n">51,5</td><td class="n">0,0007</td></tr>
   </tbody>
 </table>
 
-<p class="note bad"><b>Trampa evitada.</b> La salida por RSI&gt;70 parecía la mejor con +6,2% y
-70% de aciertos. Pero el 48% de esas operaciones nunca alcanza RSI 70 y sale por el tope de 63
-ruedas: la duración mediana es 61 ruedas. Ese retorno era casi todo plazo, no señal. Contra la
-base del mismo plazo el edge se derrumba a +0,4 pp.</p>
+<p><b>Regla elegida: vender cuando el precio cierra de nuevo sobre su media de 20 días.</b>
+La reversión se completó y no hay nada más que esperar. Le gana al plazo fijo en
+<b>13 de 16 años</b>, sube el acierto de 61,6% a 78,2%, y mejora la cola: el percentil 5
+pasa de −11,5% a −7,2%. Además libera el capital en la mitad del tiempo.</p>
 
-<p><b>Regla elegida: salida a 21 ruedas fijas.</b> Los stops dinámicos empeoran el resultado —
-trailing de 2,5×ATR baja los aciertos al 40%, y target +5%/stop −3% al 43%. La reversión
-necesita aire.</p>
+<p class="note bad"><b>La trampa que esto expuso.</b> «RSI&gt;70» y «42 ruedas fijas»
+muestran los retornos más altos de la tabla —+3,69% y +3,06%— y son las <b>peores</b> reglas.
+Sostienen la posición 42 y 51 ruedas: todo ese retorno es plazo, no señal. Contra la base
+de su propio plazo el edge es cero o negativo. Cualquier comparación de salidas que no
+normalice por duración elige exactamente la regla equivocada.</p>
+
+<p class="note"><b>Lo que no funciona.</b> Los stops dinámicos empeoran todo: trailing de
+2,5×ATR baja los aciertos al 40%, y objetivo +5% con stop −3% al 43%. Probamos también
+variantes híbridas —tope de plazo, mínimo de ruedas, media combinada con objetivo en ATR—
+y ninguna supera a la regla simple.</p>
 
 <div class="kpis">
-  <div class="kpi"><div class="kpi-l">Operaciones</div><div class="kpi-v">338</div><div class="kpi-d">2010–2026, 15 acciones</div></div>
-  <div class="kpi"><div class="kpi-l">Aciertos</div><div class="kpi-v">59,8%</div><div class="kpi-d">base 57,6%</div></div>
-  <div class="kpi"><div class="kpi-l">Años positivos</div><div class="kpi-v">15/17</div><div class="kpi-d">flojos: 2012 y 2020</div></div>
-  <div class="kpi"><div class="kpi-l">Activos positivos</div><div class="kpi-v">14/15</div><div class="kpi-d">único negativo: IRSA</div></div>
+  <div class="kpi"><div class="kpi-l">Operaciones</div><div class="kpi-v">3.203</div><div class="kpi-d">2010–2026, 82 activos</div></div>
+  <div class="kpi"><div class="kpi-l">Aciertos</div><div class="kpi-v">78,2%</div><div class="kpi-d">base 61,6% con plazo fijo</div></div>
+  <div class="kpi"><div class="kpi-l">Años que gana</div><div class="kpi-v">13/16</div><div class="kpi-d">vs la salida a plazo fijo</div></div>
+  <div class="kpi"><div class="kpi-l">Percentil 5</div><div class="kpi-v">−7,2%</div><div class="kpi-d">vs −11,5% con plazo fijo</div></div>
 </div>
 
 <h2 id="regimen">7 · Señal C — Régimen de mercado</h2>

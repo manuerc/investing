@@ -79,7 +79,7 @@ def equity_embed(sig) -> dict:
         "fields": [
             {"name": "Cierre", "value": f"${_num(sig.close)}", "inline": True},
             {"name": "Entrada", "value": "open de la próxima rueda", "inline": True},
-            {"name": "Salida", "value": f"{sig.hold_bars} ruedas (plazo fijo)", "inline": True},
+            {"name": "Salida", "value": "cuando cierre sobre su media de 20 días", "inline": True},
             {"name": "Volatilidad", "value": f"ATR {_pct(sig.atr_pct)}", "inline": True},
             {"name": "Se cumplen", "value": "\n".join(marcadas) or "—", "inline": False},
             *([{"name": "No se cumplen", "value": "\n".join(faltan), "inline": False}]
@@ -133,15 +133,18 @@ def regime_embed(sig, changes_this_year: int = 0) -> dict:
 def exit_embed(pos: dict) -> dict:
     pnl = pos["pnl_pct"]
     return {
-        "title": f"🔵 SALIDA · {pos['asset']} · se cumplieron {pos['bars_held']} ruedas",
+        "title": (f"🔵 SALIDA · {pos['asset']} · "
+                  + ("volvió sobre su media de 20 días" if pos.get("motivo") == "vuelta a la media"
+                     else f"tope de plazo, {pos['bars_held']} ruedas")),
         "description": ("Resultado " + ("**" + _pct(pnl) + "**" if pnl is not None else "—")),
         "color": COLOR["exit"],
         "fields": [
             {"name": "Entrada", "value": f"${_num(pos['entry_price'])}", "inline": True},
             {"name": "Cierre actual", "value": f"${_num(pos['exit_price'])}", "inline": True},
             {"name": "Señal", "value": pos["signal_date"], "inline": True},
+            {"name": "Duración", "value": f"{pos['bars_held']} ruedas", "inline": True},
         ],
-        "footer": {"text": "salida por plazo, no por indicador"},
+        "footer": {"text": "la reversión se completó: el precio volvió a su media"},
     }
 
 

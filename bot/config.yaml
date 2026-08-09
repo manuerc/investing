@@ -23,7 +23,11 @@ equities:
   benchmark: SPY
   min_conditions: 5          # validated tier: P(up in 10d) = 63.9% vs 55.7% base
   cooldown_bars: 10
-  hold_bars: 21              # exit rule with the best edge vs its own base rate
+  # Exit: first close back above the 20-day mean. Chosen on 71 assets outside
+  # the watchlist and validated on it. Beats a fixed 21-session hold in 13 of
+  # 16 years, with 78% winners vs 62% and a 5th percentile of -7.2% vs -11.5%.
+  # hold_bars is only the backstop for trades that never revert.
+  hold_bars: 63
 
 crypto:
   watchlist:
