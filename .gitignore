@@ -8,7 +8,9 @@ __pycache__/
 *.token
 
 # Caché de precios y estado del bot: regenerables, no van al repo.
-data/
+# La barra inicial importa: sin ella el patrón matchea cualquier carpeta
+# llamada 'data' a cualquier profundidad, incluida docs/data/ que SÍ se publica.
+/data/
 
 # Los resultados chicos SÍ se publican, para que cualquiera pueda verificar
 # los números de la documentación. Solo se excluye el archivo pesado.
