@@ -261,6 +261,15 @@
       "n_exits": 0,
       "ran_at": "2026-08-22T22:50:15+00:00",
       "regime_change": 0
+    },
+    {
+      "dry_run": 0,
+      "id": 17,
+      "n_crypto": 0,
+      "n_equity": 0,
+      "n_exits": 0,
+      "ran_at": "2026-08-23T22:50:04+00:00",
+      "regime_change": 0
     }
   ]
 }
