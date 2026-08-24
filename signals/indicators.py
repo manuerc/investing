@@ -113,6 +113,57 @@ def rsi_bearish_divergence(close: pd.Series, rsi_s: pd.Series, lookback: int = 2
     return price_hh & (close > prev_price_max) & (rsi_s < prev_rsi_at_max)
 
 
+def vwap_anchored(high: pd.Series, low: pd.Series, close: pd.Series,
+                  volume: pd.Series, anchor: str = "D") -> pd.Series:
+    """VWAP that resets at each `anchor` boundary (default: daily, UTC).
+
+    Crypto trades 24/7 so there is no session open to anchor to like on an
+    equity exchange; the daily UTC boundary is the closest stand-in.
+    """
+    typical = (high + low + close) / 3.0
+    tp_vol = typical * volume
+    key = typical.index.tz_convert("UTC").floor(anchor) if typical.index.tz is not None \
+        else typical.index.floor(anchor)
+    cum_tp_vol = tp_vol.groupby(key).cumsum()
+    cum_vol = volume.groupby(key).cumsum()
+    return cum_tp_vol / cum_vol.replace(0.0, np.nan)
+
+
+def poc_price(high: pd.Series, low: pd.Series, close: pd.Series, volume: pd.Series,
+             bins: int = 48) -> float | None:
+    """Point of control: the price bucket with the most traded volume.
+
+    Approximated from bar volume assigned to each bar's typical price, since
+    we only have OHLCV bars, not a real tick-level volume profile.
+    """
+    typical = (high + low + close) / 3.0
+    lo, hi = typical.min(), typical.max()
+    if not np.isfinite(lo) or not np.isfinite(hi) or hi <= lo:
+        return None
+    edges = np.linspace(lo, hi, bins + 1)
+    idx = np.clip(np.digitize(typical.to_numpy(), edges) - 1, 0, bins - 1)
+    vol_per_bin = np.bincount(idx, weights=volume.to_numpy(), minlength=bins)
+    top = int(vol_per_bin.argmax())
+    return float((edges[top] + edges[top + 1]) / 2.0)
+
+
+def fibonacci_levels(high: pd.Series, low: pd.Series) -> dict:
+    """Retracement levels for the last swing between the window's high and low.
+
+    Direction follows whichever extreme happened more recently: if the swing
+    high came after the swing low (an up-leg), levels retrace DOWN from the
+    high; otherwise they retrace UP from the low.
+    """
+    hi_idx, lo_idx = high.idxmax(), low.idxmin()
+    hi, lo = float(high.loc[hi_idx]), float(low.loc[lo_idx])
+    span = hi - lo
+    up_leg = hi_idx > lo_idx
+    levels = {}
+    for ratio in (0.382, 0.5, 0.618, 0.786):
+        levels[ratio] = hi - span * ratio if up_leg else lo + span * ratio
+    return {"direction": "up" if up_leg else "down", "high": hi, "low": lo, "levels": levels}
+
+
 def enrich(df: pd.DataFrame) -> pd.DataFrame:
     """Attach every indicator the playbooks need to an OHLCV frame."""
     o, h, l, c, v = df["open"], df["high"], df["low"], df["close"], df["volume"]

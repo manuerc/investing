@@ -68,6 +68,11 @@ STRUCTURE = [
         ("scorecard", "Resumen semanal de cómo viene funcionando cada canal en la vida real."),
         ("alertas-modelo", "Solo habla cuando un resultado se sale de lo que predice el backtest."),
     ]),
+    ("🧪 EXPERIMENTAL", True, [
+        ("discrecional", "Condiciones de una estrategia discrecional de terceros (RSI, EMA20, "
+                         "VWAP, POC, Fibonacci) sobre cripto en H1. Sin backtest ni validación "
+                         "estadística — el criterio de compra/venta es tuyo."),
+    ]),
     ("💬 COMUNIDAD", False, [
         ("charla", "Conversación general."),
         ("preguntas", "Dudas sobre las señales o el modelo."),
@@ -78,7 +83,8 @@ STRUCTURE = [
 WEBHOOK_CHANNELS = {"acciones": "DISCORD_WEBHOOK_ACCIONES", "cripto": "DISCORD_WEBHOOK_CRIPTO",
                     "regimen": "DISCORD_WEBHOOK_REGIMEN", "reporte": "DISCORD_WEBHOOK_REPORTE",
                     "scorecard": "DISCORD_WEBHOOK_SCORECARD",
-                    "alertas-modelo": "DISCORD_WEBHOOK_DRIFT"}
+                    "alertas-modelo": "DISCORD_WEBHOOK_DRIFT",
+                    "discrecional": "DISCORD_WEBHOOK_DISCRECIONAL"}
 
 # NOT "señales": Discord auto-creates a managed role named after the bot when
 # it is invited, and managed roles cannot be assigned to humans. A separate,

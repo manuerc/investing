@@ -21,6 +21,7 @@ CHANNELS = {
     "reporte": "DISCORD_WEBHOOK_REPORTE",
     "scorecard": "DISCORD_WEBHOOK_SCORECARD",
     "alertas-modelo": "DISCORD_WEBHOOK_DRIFT",
+    "discrecional": "DISCORD_WEBHOOK_DISCRECIONAL",
 }
 
 def load_env(path: Path | None = None) -> None:
@@ -185,6 +186,27 @@ def report_embed(stats: dict, eq_status: list, cr_status: list) -> dict:
                                 f"(score {_num(s['score'])})" for s in cr_status) or "—",
              "inline": False},
         ],
+    }
+
+
+def discretionary_embed(alert: dict) -> dict:
+    marcadas = [f"✅ {k}" for k in alert["triggered"]]
+    faltan = [f"◽ {k}" for k in alert["detail"] if k not in alert["triggered"]]
+    return {
+        "title": f"🧪 {alert['asset']} · {len(alert['triggered'])} condición(es) nueva(s)",
+        "description": "Alerta experimental, no es una señal de compra/venta. "
+                       "Replica condiciones de una estrategia discrecional de terceros: "
+                       "el criterio final es tuyo.",
+        "color": COLOR["info"],
+        "fields": [
+            {"name": "Precio", "value": f"${_num(alert['close'])}", "inline": True},
+            {"name": "Vela", "value": "H1", "inline": True},
+            {"name": "Se activaron ahora", "value": "\n".join(marcadas) or "—", "inline": False},
+            *([{"name": "Resto de condiciones (sin cambios)",
+                "value": "\n".join(faltan), "inline": False}] if faltan else []),
+        ],
+        "footer": {"text": f"vela cerrada {alert['bar_time']} · sin backtest, sin validación "
+                           f"estadística — es contenido de terceros codificado, no un modelo propio"},
     }
 
 

@@ -1,0 +1,50 @@
+# Config runtime del canal EXPERIMENTAL de alertas discrecionales.
+#
+# Replica, como condiciones chequeables, las herramientas que describe un
+# video de trading (RSI + divergencias, EMA20 dinámica, ruptura de VWAP,
+# zona de POC por volumen, retrocesos de Fibonacci). El video en sí es
+# 100% discrecional ("miro el gráfico y decido"), así que esto NO es una
+# señal de compra/venta: es una lista de condiciones activas para que el
+# criterio de quien lee decida qué hacer. No tiene backtest ni validación
+# estadística — es intencionalmente independiente del modelo principal.
+#
+# No reemplaza ni modifica bot/config.yaml. Corre en paralelo.
+
+crypto:
+  watchlist:
+    - {alias: BTC, symbol: BTC-USD}
+    - {alias: ETH, symbol: ETH-USD}
+    - {alias: BNB, symbol: BNB-USD}
+    - {alias: SOL, symbol: SOL-USD}
+    - {alias: XRP, symbol: XRP-USD}
+    - {alias: ADA, symbol: ADA-USD}
+
+# Timeframe principal: H1, que es el que el video usa para RSI/EMA/VWAP.
+intraday_period: "60d"
+intraday_interval: "1h"
+
+rsi:
+  period: 14
+  overbought: 70
+  oversold: 30
+  divergence_lookback: 24        # ~1 día en H1
+
+ema:
+  period: 20
+  touch_pct: 0.005               # a menos de 0,5% se considera "toque"
+
+vwap:
+  anchor: "D"                    # ancla diaria (UTC) — cripto no tiene sesión
+
+poc:
+  lookback_bars: 720             # ~30 días en H1
+  bins: 48
+  proximity_pct: 0.005
+
+fibonacci:
+  timeframe: "4h"                # el video usa Fibo en H4, se resamplea desde H1
+  lookback_bars: 42               # ~7 días en H4
+  proximity_pct: 0.003
+  levels: [0.618, 0.786]          # las dos zonas que menciona el video
+
+min_conditions_to_alert: 1

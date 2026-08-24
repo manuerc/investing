@@ -46,3 +46,26 @@ def load_universe(universe: list[dict], start: str, end: str) -> dict[str, pd.Da
     for item in universe:
         out[item["alias"]] = load_ohlcv(item["symbol"], start, end)
     return out
+
+
+def load_ohlcv_intraday(symbol: str, period: str = "60d", interval: str = "1h") -> pd.DataFrame:
+    """Intraday OHLCV, no cache: yfinance only serves the trailing window for
+    sub-daily intervals (~730d for 1h), so a start/end cache key doesn't make
+    sense here — every call just asks for the latest `period`.
+    """
+    raw = yf.download(
+        symbol, period=period, interval=interval, progress=False,
+        auto_adjust=True, threads=False,
+    )
+    if raw.empty:
+        raise RuntimeError(f"[DATA] no rows returned for {symbol} ({interval})")
+
+    if isinstance(raw.columns, pd.MultiIndex):
+        raw.columns = raw.columns.get_level_values(0)
+
+    df = raw.rename(
+        columns={"Open": "open", "High": "high", "Low": "low", "Close": "close", "Volume": "volume"}
+    )[["open", "high", "low", "close", "volume"]]
+    df.index = pd.to_datetime(df.index, utc=True)
+    df = df[~df.index.duplicated(keep="last")].sort_index()
+    return df.dropna(subset=["open", "high", "low", "close"])
