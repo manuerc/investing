@@ -34,6 +34,9 @@ crypto:
     - {alias: BTC, symbol: BTC-USD}
     - {alias: ETH, symbol: ETH-USD}
     - {alias: BNB, symbol: BNB-USD}
+    - {alias: SOL, symbol: SOL-USD}
+    - {alias: XRP, symbol: XRP-USD}
+    - {alias: ADA, symbol: ADA-USD}
   rank_window: 252
   rebalance_band: 0.10       # only alert when target weight moves more than this
   weight_min: 0.0
