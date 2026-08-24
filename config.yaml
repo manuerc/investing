@@ -24,6 +24,9 @@ universe:
   - {alias: BTC,   symbol: BTC-USD, class: crypto, benchmark: BTC-USD}
   - {alias: ETH,   symbol: ETH-USD, class: crypto, benchmark: BTC-USD}
   - {alias: BNB,   symbol: BNB-USD, class: crypto, benchmark: BTC-USD}
+  - {alias: SOL,   symbol: SOL-USD, class: crypto, benchmark: BTC-USD}
+  - {alias: XRP,   symbol: XRP-USD, class: crypto, benchmark: BTC-USD}
+  - {alias: ADA,   symbol: ADA-USD, class: crypto, benchmark: BTC-USD}
 
 regime:
   stock_proxy: SPY
