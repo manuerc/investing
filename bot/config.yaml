@@ -3,7 +3,7 @@
 #   DISCORD_WEBHOOK_ACCIONES / _CRIPTO / _REGIMEN / _REPORTE
 
 equities:
-  # 15 names. IRSA is intentionally absent: the IRS ADR trades ~$694k/day,
+  # 23 names. IRSA is intentionally absent: the IRS ADR trades ~$694k/day,
   # far below the $5M liquidity floor used in the backtest.
   watchlist:
     - {alias: MELI,  symbol: MELI}
@@ -20,6 +20,15 @@ equities:
     - {alias: IBM,   symbol: IBM}
     - {alias: GOOGL, symbol: GOOGL}
     - {alias: AAPL,  symbol: AAPL}
+    - {alias: MU,    symbol: MU}
+    - {alias: NU,    symbol: NU}
+    - {alias: TSLA,  symbol: TSLA}
+    - {alias: AMZN,  symbol: AMZN}
+    - {alias: QQQ,   symbol: QQQ}
+    - {alias: PLTR,  symbol: PLTR}
+    - {alias: BRKB,  symbol: BRK-B}
+    - {alias: TSM,   symbol: TSM}
+    - {alias: QTUM,  symbol: QTUM}
   benchmark: SPY
   min_conditions: 5          # validated tier: P(up in 10d) = 63.9% vs 55.7% base
   cooldown_bars: 10
