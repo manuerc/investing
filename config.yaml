@@ -21,6 +21,15 @@ universe:
   - {alias: IRSA,  symbol: IRS,     class: stock,  benchmark: SPY}   # ADR NYSE
   - {alias: GOOGL, symbol: GOOGL,   class: stock,  benchmark: SPY}
   - {alias: AAPL,  symbol: AAPL,    class: stock,  benchmark: SPY}
+  - {alias: MU,    symbol: MU,      class: stock,  benchmark: SPY}
+  - {alias: NU,    symbol: NU,      class: stock,  benchmark: SPY}
+  - {alias: TSLA,  symbol: TSLA,    class: stock,  benchmark: SPY}
+  - {alias: AMZN,  symbol: AMZN,    class: stock,  benchmark: SPY}
+  - {alias: QQQ,   symbol: QQQ,     class: stock,  benchmark: SPY}
+  - {alias: PLTR,  symbol: PLTR,    class: stock,  benchmark: SPY}
+  - {alias: BRKB,  symbol: BRK-B,   class: stock,  benchmark: SPY}
+  - {alias: TSM,   symbol: TSM,     class: stock,  benchmark: SPY}
+  - {alias: QTUM,  symbol: QTUM,    class: stock,  benchmark: SPY}
   - {alias: BTC,   symbol: BTC-USD, class: crypto, benchmark: BTC-USD}
   - {alias: ETH,   symbol: ETH-USD, class: crypto, benchmark: BTC-USD}
   - {alias: BNB,   symbol: BNB-USD, class: crypto, benchmark: BTC-USD}
