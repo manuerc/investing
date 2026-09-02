@@ -1,5 +1,5 @@
 {
-  "generado": "2026-09-01T01:22:08+00:00",
+  "generado": "2026-09-02T00:26:09+00:00",
   "nota_metodologica": "Detectar el edge en vivo requiere ~685 operaciones (34 años). Estas métricas NO validan la estrategia: detectan si dejó de comportarse como el backtest. El contraste es contra la distribución del backtest, no contra cero.",
   "acciones": {
     "n_cerradas": 0,
@@ -9,10 +9,10 @@
   "cripto": {
     "n_ajustes": 14,
     "desde": "2026-08-07",
-    "tilt_pct": 0.10862753890940313,
-    "hold_pct": 0.23247989919244283,
-    "tilt_maxdd": -0.059444307175948397,
-    "hold_maxdd": -0.04002560852436621,
+    "tilt_pct": 0.07843127889076884,
+    "hold_pct": 0.21024701097605103,
+    "tilt_maxdd": -0.08506270764474888,
+    "hold_maxdd": -0.057142346893347185,
     "serie": [
       {
         "d": "2026-08-07",
@@ -125,9 +125,24 @@
         "b": 0.23402
       },
       {
-        "d": "2026-09-01",
-        "a": 0.10863,
-        "b": 0.23248
+        "d": "2026-08-29",
+        "a": 0.12343,
+        "b": 0.24343
+      },
+      {
+        "d": "2026-08-30",
+        "a": 0.08193,
+        "b": 0.21272
+      },
+      {
+        "d": "2026-08-31",
+        "a": 0.10675,
+        "b": 0.23136
+      },
+      {
+        "d": "2026-09-02",
+        "a": 0.07843,
+        "b": 0.21025
       }
     ]
   },
@@ -135,10 +150,10 @@
     "n_cambios": 1,
     "desde": "2026-08-07",
     "estado_actual": "RISK_ON",
-    "filtrado_pct": -0.008030962282064236,
-    "spy_pct": -0.008030962282064236,
-    "filtrado_maxdd": -0.019643170156015133,
-    "spy_maxdd": -0.019643170156015133,
+    "filtrado_pct": -0.014846209973058966,
+    "spy_pct": -0.014846209973058966,
+    "filtrado_maxdd": -0.02069724827078312,
+    "spy_maxdd": -0.02069724827078312,
     "expuesto": 1.0,
     "serie": [
       {
@@ -225,6 +240,11 @@
         "d": "2026-08-31",
         "a": -0.00803,
         "b": -0.00803
+      },
+      {
+        "d": "2026-09-01",
+        "a": -0.01485,
+        "b": -0.01485
       }
     ]
   }
