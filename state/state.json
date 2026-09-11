@@ -137,8 +137,34 @@
       "weight": 1.496031746031746
     }
   ],
-  "equity_signals": [],
-  "positions": [],
+  "equity_signals": [
+    {
+      "asset": "GOOGL",
+      "bar_date": "2026-09-09",
+      "close": 330.6499938964844,
+      "conditions": 5,
+      "created_at": "2026-09-11T00:24:30+00:00",
+      "detail": "{\"RSI(2) < 10\": true, \"IBS < 0,20\": false, \"RSI(14) < 40\": true, \"z-score 20d < -1,5\": true, \"3+ ruedas bajando\": true, \"SPY castigado\": true}",
+      "id": 1,
+      "p_up": 0.639
+    }
+  ],
+  "positions": [
+    {
+      "asset": "GOOGL",
+      "bars_held": 0,
+      "entry_date": null,
+      "entry_price": null,
+      "exit_date": null,
+      "exit_price": null,
+      "hold_bars": 63,
+      "id": 1,
+      "last_bar_date": "2026-09-09",
+      "pnl_pct": null,
+      "signal_date": "2026-09-09",
+      "status": "open"
+    }
+  ],
   "regime_history": [
     {
       "bar_date": "2026-08-07",
@@ -479,6 +505,15 @@
       "n_equity": 0,
       "n_exits": 0,
       "ran_at": "2026-09-10T00:27:44+00:00",
+      "regime_change": 0
+    },
+    {
+      "dry_run": 0,
+      "id": 37,
+      "n_crypto": 0,
+      "n_equity": 1,
+      "n_exits": 0,
+      "ran_at": "2026-09-11T00:24:32+00:00",
       "regime_change": 0
     }
   ]
