@@ -1,18 +1,29 @@
 {
-  "generado": "2026-09-11T00:24:32+00:00",
+  "generado": "2026-09-12T00:30:20+00:00",
   "nota_metodologica": "Detectar el edge en vivo requiere ~685 operaciones (34 años). Estas métricas NO validan la estrategia: detectan si dejó de comportarse como el backtest. El contraste es contra la distribución del backtest, no contra cero.",
   "acciones": {
     "n_cerradas": 0,
-    "n_abiertas": 0,
-    "operaciones": []
+    "n_abiertas": 1,
+    "operaciones": [
+      {
+        "asset": "GOOGL",
+        "signal_date": "2026-09-09",
+        "entry_date": "2026-09-10",
+        "entry": 328.2300109863281,
+        "exit": 332.6000061035156,
+        "ret": 0.013313819489131129,
+        "bars_held": 1,
+        "estado": "abierta"
+      }
+    ]
   },
   "cripto": {
     "n_ajustes": 14,
     "desde": "2026-08-07",
-    "tilt_pct": 0.0974755503154856,
-    "hold_pct": 0.2261797531821248,
-    "tilt_maxdd": -0.08652607455890371,
-    "hold_maxdd": -0.05817519382332692,
+    "tilt_pct": 0.12308795538022976,
+    "hold_pct": 0.24545081501069488,
+    "tilt_maxdd": -0.08669271884224317,
+    "hold_maxdd": -0.05868107384504051,
     "serie": [
       {
         "d": "2026-08-07",
@@ -185,9 +196,14 @@
         "b": 0.25319
       },
       {
-        "d": "2026-09-11",
-        "a": 0.09748,
-        "b": 0.22618
+        "d": "2026-09-10",
+        "a": 0.08946,
+        "b": 0.22024
+      },
+      {
+        "d": "2026-09-12",
+        "a": 0.12309,
+        "b": 0.24545
       }
     ]
   },
@@ -195,10 +211,10 @@
     "n_cambios": 1,
     "desde": "2026-08-07",
     "estado_actual": "RISK_ON",
-    "filtrado_pct": -0.014044416127059534,
-    "spy_pct": -0.014044416127059534,
-    "filtrado_maxdd": -0.02069724827078312,
-    "spy_maxdd": -0.02069724827078312,
+    "filtrado_pct": -0.019954468718042295,
+    "spy_pct": -0.019954468718042295,
+    "filtrado_maxdd": -0.025775167978497215,
+    "spy_maxdd": -0.025775167978497215,
     "expuesto": 1.0,
     "serie": [
       {
@@ -315,6 +331,11 @@
         "d": "2026-09-09",
         "a": -0.01404,
         "b": -0.01404
+      },
+      {
+        "d": "2026-09-10",
+        "a": -0.01995,
+        "b": -0.01995
       }
     ]
   }
