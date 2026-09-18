@@ -154,6 +154,16 @@
       "detail": "{\"RSI(2) < 10\": true, \"IBS < 0,20\": false, \"RSI(14) < 40\": true, \"z-score 20d < -1,5\": true, \"3+ ruedas bajando\": true, \"SPY castigado\": true}",
       "id": 1,
       "p_up": 0.639
+    },
+    {
+      "asset": "AMZN",
+      "bar_date": "2026-09-16",
+      "close": 245.9600067138672,
+      "conditions": 5,
+      "created_at": "2026-09-18T00:41:24+00:00",
+      "detail": "{\"RSI(2) < 10\": true, \"IBS < 0,20\": false, \"RSI(14) < 40\": true, \"z-score 20d < -1,5\": true, \"3+ ruedas bajando\": true, \"SPY castigado\": true}",
+      "id": 2,
+      "p_up": 0.639
     }
   ],
   "positions": [
@@ -170,6 +180,20 @@
       "pnl_pct": 0.05657610878066266,
       "signal_date": "2026-09-09",
       "status": "closed"
+    },
+    {
+      "asset": "AMZN",
+      "bars_held": 0,
+      "entry_date": null,
+      "entry_price": null,
+      "exit_date": null,
+      "exit_price": null,
+      "hold_bars": 63,
+      "id": 2,
+      "last_bar_date": "2026-09-16",
+      "pnl_pct": null,
+      "signal_date": "2026-09-16",
+      "status": "open"
     }
   ],
   "regime_history": [
@@ -575,6 +599,15 @@
       "n_equity": 0,
       "n_exits": 0,
       "ran_at": "2026-09-17T00:49:03+00:00",
+      "regime_change": 0
+    },
+    {
+      "dry_run": 0,
+      "id": 44,
+      "n_crypto": 0,
+      "n_equity": 1,
+      "n_exits": 0,
+      "ran_at": "2026-09-18T00:41:27+00:00",
       "regime_change": 0
     }
   ]
