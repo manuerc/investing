@@ -111,6 +111,13 @@
       "id": 16,
       "recorded_at": "2026-09-19T00:31:17+00:00",
       "weight": 1.3968253968253967
+    },
+    {
+      "asset": "ETH",
+      "bar_date": "2026-09-19",
+      "id": 17,
+      "recorded_at": "2026-09-21T00:25:26+00:00",
+      "weight": 1.5
     }
   ],
   "crypto_weights": [
@@ -122,9 +129,9 @@
     },
     {
       "asset": "ETH",
-      "bar_date": "2026-09-15",
-      "updated_at": "2026-09-17T00:49:00+00:00",
-      "weight": 1.3968253968253967
+      "bar_date": "2026-09-19",
+      "updated_at": "2026-09-21T00:25:26+00:00",
+      "weight": 1.5
     },
     {
       "asset": "BNB",
@@ -633,6 +640,15 @@
       "n_equity": 0,
       "n_exits": 0,
       "ran_at": "2026-09-20T00:17:53+00:00",
+      "regime_change": 0
+    },
+    {
+      "dry_run": 0,
+      "id": 47,
+      "n_crypto": 1,
+      "n_equity": 0,
+      "n_exits": 0,
+      "ran_at": "2026-09-21T00:25:29+00:00",
       "regime_change": 0
     }
   ]
