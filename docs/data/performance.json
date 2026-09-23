@@ -1,5 +1,5 @@
 {
-  "generado": "2026-09-22T01:03:24+00:00",
+  "generado": "2026-09-23T00:51:49+00:00",
   "nota_metodologica": "Detectar el edge en vivo requiere ~685 operaciones (34 años). Estas métricas NO validan la estrategia: detectan si dejó de comportarse como el backtest. El contraste es contra la distribución del backtest, no contra cero.",
   "acciones": {
     "n_cerradas": 1,
@@ -20,9 +20,9 @@
         "signal_date": "2026-09-16",
         "entry_date": "2026-09-17",
         "entry": 251.07000732421875,
-        "exit": 253.7100067138672,
-        "ret": 0.010514993080154245,
-        "bars_held": 2,
+        "exit": 258.45001220703125,
+        "ret": 0.029394211445106455,
+        "bars_held": 3,
         "estado": "abierta"
       }
     ],
@@ -52,8 +52,8 @@
   "cripto": {
     "n_ajustes": 17,
     "desde": "2026-08-07",
-    "tilt_pct": 0.3246194439193739,
-    "hold_pct": 0.39898290578574214,
+    "tilt_pct": 0.36475127941879326,
+    "hold_pct": 0.4284327615102168,
     "tilt_maxdd": -0.11579122932287689,
     "hold_maxdd": -0.07791224555037335,
     "serie": [
@@ -283,9 +283,14 @@
         "b": 0.32888
       },
       {
-        "d": "2026-09-22",
-        "a": 0.32462,
-        "b": 0.39898
+        "d": "2026-09-21",
+        "a": 0.34425,
+        "b": 0.41348
+      },
+      {
+        "d": "2026-09-23",
+        "a": 0.36475,
+        "b": 0.42843
       }
     ]
   },
@@ -293,8 +298,8 @@
     "n_cambios": 1,
     "desde": "2026-08-07",
     "estado_actual": "RISK_ON",
-    "filtrado_pct": -0.012516587261457879,
-    "spy_pct": -0.012516587261457879,
+    "filtrado_pct": 0.0027943353661386006,
+    "spy_pct": 0.0027943353661386006,
     "filtrado_maxdd": -0.0306345750253455,
     "spy_maxdd": -0.0306345750253455,
     "expuesto": 1.0,
@@ -448,6 +453,11 @@
         "d": "2026-09-18",
         "a": -0.01252,
         "b": -0.01252
+      },
+      {
+        "d": "2026-09-21",
+        "a": 0.00279,
+        "b": 0.00279
       }
     ]
   }

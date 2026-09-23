@@ -197,17 +197,17 @@
     },
     {
       "asset": "AMZN",
-      "bars_held": 2,
+      "bars_held": 3,
       "entry_date": "2026-09-17",
       "entry_price": 251.07000732421875,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 2,
-      "last_bar_date": "2026-09-18",
+      "last_bar_date": "2026-09-21",
       "pnl_pct": null,
       "signal_date": "2026-09-16",
-      "status": "open"
+      "status": "pending_exit"
     }
   ],
   "regime_history": [
@@ -658,6 +658,15 @@
       "n_equity": 0,
       "n_exits": 0,
       "ran_at": "2026-09-22T01:03:25+00:00",
+      "regime_change": 0
+    },
+    {
+      "dry_run": 0,
+      "id": 49,
+      "n_crypto": 0,
+      "n_equity": 0,
+      "n_exits": 1,
+      "ran_at": "2026-09-23T00:51:50+00:00",
       "regime_change": 0
     }
   ]
