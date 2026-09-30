@@ -1,9 +1,9 @@
 {
-  "generado": "2026-09-29T02:13:04+00:00",
+  "generado": "2026-09-30T01:27:22+00:00",
   "nota_metodologica": "Detectar el edge en vivo requiere ~685 operaciones (34 años). Estas métricas NO validan la estrategia: detectan si dejó de comportarse como el backtest. El contraste es contra la distribución del backtest, no contra cero.",
   "acciones": {
     "n_cerradas": 2,
-    "n_abiertas": 0,
+    "n_abiertas": 3,
     "operaciones": [
       {
         "asset": "GOOGL",
@@ -24,6 +24,36 @@
         "ret": 0.016091102753327924,
         "bars_held": 3,
         "estado": "cerrada"
+      },
+      {
+        "asset": "VIST",
+        "signal_date": "2026-09-28",
+        "entry_date": "2026-09-29",
+        "entry": 66.05000305175781,
+        "exit": 66.70999908447266,
+        "ret": 0.009992369450727567,
+        "bars_held": 1,
+        "estado": "abierta"
+      },
+      {
+        "asset": "YPFD",
+        "signal_date": "2026-09-28",
+        "entry_date": "2026-09-29",
+        "entry": 50.709999084472656,
+        "exit": 50.310001373291016,
+        "ret": -0.007887945541377839,
+        "bars_held": 1,
+        "estado": "abierta"
+      },
+      {
+        "asset": "EWZ",
+        "signal_date": "2026-09-28",
+        "entry_date": "2026-09-29",
+        "entry": 36.04999923706055,
+        "exit": 36.470001220703125,
+        "ret": 0.01165054070821725,
+        "bars_held": 1,
+        "estado": "abierta"
       }
     ],
     "acierto": 1.0,
@@ -55,8 +85,8 @@
   "cripto": {
     "n_ajustes": 18,
     "desde": "2026-08-07",
-    "tilt_pct": 0.27603022446982894,
-    "hold_pct": 0.36621471451362564,
+    "tilt_pct": 0.298245151557365,
+    "hold_pct": 0.3818564964422335,
     "tilt_maxdd": -0.11579122932287689,
     "hold_maxdd": -0.07791224555037335,
     "serie": [
@@ -321,9 +351,14 @@
         "b": 0.40907
       },
       {
-        "d": "2026-09-29",
-        "a": 0.27603,
-        "b": 0.36621
+        "d": "2026-09-28",
+        "a": 0.30221,
+        "b": 0.38468
+      },
+      {
+        "d": "2026-09-30",
+        "a": 0.29825,
+        "b": 0.38186
       }
     ]
   },
@@ -331,8 +366,8 @@
     "n_cambios": 1,
     "desde": "2026-08-07",
     "estado_actual": "RISK_ON",
-    "filtrado_pct": -0.0074345747766007,
-    "spy_pct": -0.0074345747766007,
+    "filtrado_pct": -0.00926251670595346,
+    "spy_pct": -0.00926251670595346,
     "filtrado_maxdd": -0.0306345750253455,
     "spy_maxdd": -0.0306345750253455,
     "expuesto": 1.0,
@@ -516,6 +551,11 @@
         "d": "2026-09-28",
         "a": -0.00743,
         "b": -0.00743
+      },
+      {
+        "d": "2026-09-29",
+        "a": -0.00926,
+        "b": -0.00926
       }
     ]
   }
