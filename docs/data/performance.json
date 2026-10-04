@@ -1,9 +1,9 @@
 {
-  "generado": "2026-10-03T01:20:17+00:00",
+  "generado": "2026-10-04T01:54:51+00:00",
   "nota_metodologica": "Detectar el edge en vivo requiere ~685 operaciones (34 años). Estas métricas NO validan la estrategia: detectan si dejó de comportarse como el backtest. El contraste es contra la distribución del backtest, no contra cero.",
   "acciones": {
     "n_cerradas": 3,
-    "n_abiertas": 2,
+    "n_abiertas": 3,
     "operaciones": [
       {
         "asset": "GOOGL",
@@ -30,9 +30,9 @@
         "signal_date": "2026-09-28",
         "entry_date": "2026-09-29",
         "entry": 66.05000305175781,
-        "exit": 64.62999725341797,
-        "ret": -0.021498951290389923,
-        "bars_held": 3,
+        "exit": 64.25,
+        "ret": -0.027252126700846646,
+        "bars_held": 4,
         "estado": "abierta"
       },
       {
@@ -40,9 +40,9 @@
         "signal_date": "2026-09-28",
         "entry_date": "2026-09-29",
         "entry": 50.709999084472656,
-        "exit": 49.27000045776367,
-        "ret": -0.028396739355294298,
-        "bars_held": 3,
+        "exit": 49.66999816894531,
+        "ret": -0.02050879381391646,
+        "bars_held": 4,
         "estado": "abierta"
       },
       {
@@ -54,6 +54,16 @@
         "ret": 0.0319001816981086,
         "bars_held": 2,
         "estado": "cerrada"
+      },
+      {
+        "asset": "JNJ",
+        "signal_date": "2026-10-01",
+        "entry_date": "2026-10-02",
+        "entry": 259.3800048828125,
+        "exit": 256.0299987792969,
+        "ret": -0.012915436966813076,
+        "bars_held": 1,
+        "estado": "abierta"
       }
     ],
     "acierto": 1.0,
@@ -85,8 +95,8 @@
   "cripto": {
     "n_ajustes": 18,
     "desde": "2026-08-07",
-    "tilt_pct": 0.30756135185230193,
-    "hold_pct": 0.38859716874912564,
+    "tilt_pct": 0.31404910372567607,
+    "hold_pct": 0.393260410798006,
     "tilt_maxdd": -0.11579122932287689,
     "hold_maxdd": -0.07791224555037335,
     "serie": [
@@ -371,9 +381,14 @@
         "b": 0.39013
       },
       {
-        "d": "2026-10-03",
-        "a": 0.30756,
-        "b": 0.3886
+        "d": "2026-10-02",
+        "a": 0.29867,
+        "b": 0.38228
+      },
+      {
+        "d": "2026-10-04",
+        "a": 0.31405,
+        "b": 0.39326
       }
     ]
   },
@@ -381,8 +396,8 @@
     "n_cambios": 1,
     "desde": "2026-08-07",
     "estado_actual": "RISK_ON",
-    "filtrado_pct": -0.009534797047882404,
-    "spy_pct": -0.009534797047882404,
+    "filtrado_pct": -0.0022098940393469046,
+    "spy_pct": -0.0022098940393469046,
     "filtrado_maxdd": -0.0306345750253455,
     "spy_maxdd": -0.0306345750253455,
     "expuesto": 1.0,
@@ -581,6 +596,11 @@
         "d": "2026-10-01",
         "a": -0.00953,
         "b": -0.00953
+      },
+      {
+        "d": "2026-10-02",
+        "a": -0.00221,
+        "b": -0.00221
       }
     ]
   }
