@@ -1,9 +1,9 @@
 {
-  "generado": "2026-10-16T00:37:54+00:00",
+  "generado": "2026-10-17T00:42:11+00:00",
   "nota_metodologica": "Detectar el edge en vivo requiere ~685 operaciones (34 años). Estas métricas NO validan la estrategia: detectan si dejó de comportarse como el backtest. El contraste es contra la distribución del backtest, no contra cero.",
   "acciones": {
     "n_cerradas": 6,
-    "n_abiertas": 1,
+    "n_abiertas": 2,
     "operaciones": [
       {
         "asset": "GOOGL",
@@ -74,6 +74,16 @@
         "ret": 0.06845036826765782,
         "bars_held": 1,
         "estado": "abierta"
+      },
+      {
+        "asset": "QTUM",
+        "signal_date": "2026-10-14",
+        "entry_date": "2026-10-15",
+        "entry": 138.55999755859375,
+        "exit": 141.94000244140625,
+        "ret": 0.024393800103692742,
+        "bars_held": 1,
+        "estado": "abierta"
       }
     ],
     "acierto": 0.8333333333333334,
@@ -105,10 +115,10 @@
   "cripto": {
     "n_ajustes": 23,
     "desde": "2026-08-07",
-    "tilt_pct": 0.16409779846395,
-    "hold_pct": 0.28380457606753984,
-    "tilt_maxdd": -0.1525728228041936,
-    "hold_maxdd": -0.10616471331469357,
+    "tilt_pct": 0.13889613494697195,
+    "hold_pct": 0.26384951298472514,
+    "tilt_maxdd": -0.16370173092875362,
+    "hold_maxdd": -0.11444231955123674,
     "serie": [
       {
         "d": "2026-08-07",
@@ -456,9 +466,14 @@
         "b": 0.27566
       },
       {
-        "d": "2026-10-16",
-        "a": 0.1641,
-        "b": 0.2838
+        "d": "2026-10-15",
+        "a": 0.16182,
+        "b": 0.28198
+      },
+      {
+        "d": "2026-10-17",
+        "a": 0.1389,
+        "b": 0.26385
       }
     ]
   },

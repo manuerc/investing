@@ -383,14 +383,14 @@
     },
     {
       "asset": "QTUM",
-      "bars_held": 0,
-      "entry_date": null,
-      "entry_price": null,
+      "bars_held": 1,
+      "entry_date": "2026-10-15",
+      "entry_price": 138.55999755859375,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 8,
-      "last_bar_date": "2026-10-14",
+      "last_bar_date": "2026-10-15",
       "pnl_pct": null,
       "signal_date": "2026-10-14",
       "status": "open"
@@ -1060,6 +1060,15 @@
       "n_equity": 1,
       "n_exits": 0,
       "ran_at": "2026-10-16T00:37:57+00:00",
+      "regime_change": 0
+    },
+    {
+      "dry_run": 0,
+      "id": 73,
+      "n_crypto": 0,
+      "n_equity": 0,
+      "n_exits": 0,
+      "ran_at": "2026-10-17T00:42:14+00:00",
       "regime_change": 0
     }
   ]
