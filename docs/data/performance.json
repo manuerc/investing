@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-17T00:42:11+00:00",
+  "generado": "2026-10-18T00:12:09+00:00",
   "nota_metodologica": "Detectar el edge en vivo requiere ~685 operaciones (34 años). Estas métricas NO validan la estrategia: detectan si dejó de comportarse como el backtest. El contraste es contra la distribución del backtest, no contra cero.",
   "acciones": {
     "n_cerradas": 6,
@@ -70,9 +70,9 @@
         "signal_date": "2026-10-14",
         "entry_date": "2026-10-15",
         "entry": 871.5800170898438,
-        "exit": 931.239990234375,
-        "ret": 0.06845036826765782,
-        "bars_held": 1,
+        "exit": 878.8400268554688,
+        "ret": 0.008329711126083161,
+        "bars_held": 2,
         "estado": "abierta"
       },
       {
@@ -80,9 +80,9 @@
         "signal_date": "2026-10-14",
         "entry_date": "2026-10-15",
         "entry": 138.55999755859375,
-        "exit": 141.94000244140625,
-        "ret": 0.024393800103692742,
-        "bars_held": 1,
+        "exit": 137.13999938964844,
+        "ret": -0.01024825486406944,
+        "bars_held": 2,
         "estado": "abierta"
       }
     ],
@@ -113,12 +113,12 @@
     }
   },
   "cripto": {
-    "n_ajustes": 23,
+    "n_ajustes": 24,
     "desde": "2026-08-07",
-    "tilt_pct": 0.13889613494697195,
-    "hold_pct": 0.26384951298472514,
-    "tilt_maxdd": -0.16370173092875362,
-    "hold_maxdd": -0.11444231955123674,
+    "tilt_pct": 0.12345061532540513,
+    "hold_pct": 0.2512554299198628,
+    "tilt_maxdd": -0.17504346871156184,
+    "hold_maxdd": -0.12326677758339588,
     "serie": [
       {
         "d": "2026-08-07",
@@ -471,9 +471,14 @@
         "b": 0.28198
       },
       {
-        "d": "2026-10-17",
-        "a": 0.1389,
-        "b": 0.26385
+        "d": "2026-10-16",
+        "a": 0.14232,
+        "b": 0.26652
+      },
+      {
+        "d": "2026-10-18",
+        "a": 0.12345,
+        "b": 0.25126
       }
     ]
   },
@@ -481,8 +486,8 @@
     "n_cambios": 1,
     "desde": "2026-08-07",
     "estado_actual": "RISK_ON",
-    "filtrado_pct": 0.0005773989116699685,
-    "spy_pct": 0.0005773989116699685,
+    "filtrado_pct": -0.010494148069547293,
+    "spy_pct": -0.010494148069547293,
     "filtrado_maxdd": -0.0306345750253455,
     "spy_maxdd": -0.0306345750253455,
     "expuesto": 1.0,
@@ -731,6 +736,11 @@
         "d": "2026-10-15",
         "a": 0.00058,
         "b": 0.00058
+      },
+      {
+        "d": "2026-10-16",
+        "a": -0.01049,
+        "b": -0.01049
       }
     ]
   }
