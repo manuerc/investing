@@ -174,6 +174,13 @@
       "id": 25,
       "recorded_at": "2026-10-24T00:58:03+00:00",
       "weight": 1.2658730158730158
+    },
+    {
+      "asset": "XRP",
+      "bar_date": "2026-10-23",
+      "id": 26,
+      "recorded_at": "2026-10-25T00:27:53+00:00",
+      "weight": 1.25
     }
   ],
   "crypto_weights": [
@@ -203,9 +210,9 @@
     },
     {
       "asset": "XRP",
-      "bar_date": "2026-10-07",
-      "updated_at": "2026-10-09T02:26:56+00:00",
-      "weight": 1.3650793650793651
+      "bar_date": "2026-10-23",
+      "updated_at": "2026-10-25T00:27:53+00:00",
+      "weight": 1.25
     },
     {
       "asset": "ADA",
@@ -413,70 +420,70 @@
     },
     {
       "asset": "MU",
-      "bars_held": 6,
+      "bars_held": 7,
       "entry_date": "2026-10-15",
       "entry_price": 871.5800170898438,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 7,
-      "last_bar_date": "2026-10-22",
+      "last_bar_date": "2026-10-23",
       "pnl_pct": null,
       "signal_date": "2026-10-14",
       "status": "open"
     },
     {
       "asset": "QTUM",
-      "bars_held": 6,
+      "bars_held": 7,
       "entry_date": "2026-10-15",
       "entry_price": 138.55999755859375,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 8,
-      "last_bar_date": "2026-10-22",
+      "last_bar_date": "2026-10-23",
       "pnl_pct": null,
       "signal_date": "2026-10-14",
       "status": "open"
     },
     {
       "asset": "NVDA",
-      "bars_held": 4,
+      "bars_held": 5,
       "entry_date": "2026-10-19",
       "entry_price": 218.10000610351562,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 9,
-      "last_bar_date": "2026-10-22",
+      "last_bar_date": "2026-10-23",
       "pnl_pct": null,
       "signal_date": "2026-10-16",
       "status": "open"
     },
     {
       "asset": "QQQ",
-      "bars_held": 4,
+      "bars_held": 5,
       "entry_date": "2026-10-19",
       "entry_price": 719.6099853515625,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 10,
-      "last_bar_date": "2026-10-22",
+      "last_bar_date": "2026-10-23",
       "pnl_pct": null,
       "signal_date": "2026-10-16",
       "status": "open"
     },
     {
       "asset": "TSM",
-      "bars_held": 4,
+      "bars_held": 5,
       "entry_date": "2026-10-19",
       "entry_price": 421.6600036621094,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 11,
-      "last_bar_date": "2026-10-22",
+      "last_bar_date": "2026-10-23",
       "pnl_pct": null,
       "signal_date": "2026-10-16",
       "status": "open"
@@ -1218,6 +1225,15 @@
       "n_equity": 0,
       "n_exits": 0,
       "ran_at": "2026-10-24T00:58:10+00:00",
+      "regime_change": 0
+    },
+    {
+      "dry_run": 0,
+      "id": 81,
+      "n_crypto": 1,
+      "n_equity": 0,
+      "n_exits": 0,
+      "ran_at": "2026-10-25T00:27:59+00:00",
       "regime_change": 0
     }
   ]
