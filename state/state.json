@@ -516,14 +516,14 @@
     },
     {
       "asset": "NVDA",
-      "bars_held": 14,
+      "bars_held": 15,
       "entry_date": "2026-10-19",
       "entry_price": 218.10000610351562,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 9,
-      "last_bar_date": "2026-11-05",
+      "last_bar_date": "2026-11-06",
       "pnl_pct": null,
       "signal_date": "2026-10-16",
       "status": "open"
@@ -572,14 +572,14 @@
     },
     {
       "asset": "MU",
-      "bars_held": 3,
+      "bars_held": 4,
       "entry_date": "2026-11-03",
       "entry_price": 859.9299926757812,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 13,
-      "last_bar_date": "2026-11-05",
+      "last_bar_date": "2026-11-06",
       "pnl_pct": null,
       "signal_date": "2026-11-02",
       "status": "open"
@@ -600,14 +600,14 @@
     },
     {
       "asset": "TSM",
-      "bars_held": 3,
+      "bars_held": 4,
       "entry_date": "2026-11-03",
       "entry_price": 404.989990234375,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 15,
-      "last_bar_date": "2026-11-05",
+      "last_bar_date": "2026-11-06",
       "pnl_pct": null,
       "signal_date": "2026-11-02",
       "status": "open"
@@ -1466,6 +1466,15 @@
       "n_equity": 0,
       "n_exits": 0,
       "ran_at": "2026-11-06T02:44:36+00:00",
+      "regime_change": 0
+    },
+    {
+      "dry_run": 0,
+      "id": 94,
+      "n_crypto": 0,
+      "n_equity": 0,
+      "n_exits": 0,
+      "ran_at": "2026-11-07T02:13:46+00:00",
       "regime_change": 0
     }
   ]
