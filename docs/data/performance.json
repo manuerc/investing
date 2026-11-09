@@ -1,5 +1,5 @@
 {
-  "generado": "2026-11-08T01:43:53+00:00",
+  "generado": "2026-11-09T01:51:46+00:00",
   "nota_metodologica": "Detectar el edge en vivo requiere ~685 operaciones (34 años). Estas métricas NO validan la estrategia: detectan si dejó de comportarse como el backtest. El contraste es contra la distribución del backtest, no contra cero.",
   "acciones": {
     "n_cerradas": 11,
@@ -185,10 +185,10 @@
   "cripto": {
     "n_ajustes": 30,
     "desde": "2026-08-07",
-    "tilt_pct": -0.019247992133815783,
-    "hold_pct": 0.12828111230581074,
-    "tilt_maxdd": -0.2798279128369958,
-    "hold_maxdd": -0.2094327730933263,
+    "tilt_pct": -0.04157749902479102,
+    "hold_pct": 0.10763986084986521,
+    "tilt_maxdd": -0.29622460379864046,
+    "hold_maxdd": -0.22389574401912804,
     "serie": [
       {
         "d": "2026-08-07",
@@ -651,9 +651,14 @@
         "b": 0.13768
       },
       {
-        "d": "2026-11-08",
-        "a": -0.01925,
-        "b": 0.12828
+        "d": "2026-11-07",
+        "a": -0.01459,
+        "b": 0.13258
+      },
+      {
+        "d": "2026-11-09",
+        "a": -0.04158,
+        "b": 0.10764
       }
     ]
   },
