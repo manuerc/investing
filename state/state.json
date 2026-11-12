@@ -216,20 +216,48 @@
       "id": 31,
       "recorded_at": "2026-11-10T04:15:56+00:00",
       "weight": 1.130952380952381
+    },
+    {
+      "asset": "BTC",
+      "bar_date": "2026-11-10",
+      "id": 32,
+      "recorded_at": "2026-11-12T03:16:26+00:00",
+      "weight": 1.123015873015873
+    },
+    {
+      "asset": "ETH",
+      "bar_date": "2026-11-10",
+      "id": 33,
+      "recorded_at": "2026-11-12T03:16:26+00:00",
+      "weight": 1.1031746031746033
+    },
+    {
+      "asset": "SOL",
+      "bar_date": "2026-11-10",
+      "id": 34,
+      "recorded_at": "2026-11-12T03:16:26+00:00",
+      "weight": 1.1587301587301586
+    },
+    {
+      "asset": "XRP",
+      "bar_date": "2026-11-10",
+      "id": 35,
+      "recorded_at": "2026-11-12T03:16:26+00:00",
+      "weight": 0.9841269841269842
     }
   ],
   "crypto_weights": [
     {
       "asset": "BTC",
-      "bar_date": "2026-10-26",
-      "updated_at": "2026-10-28T01:33:53+00:00",
-      "weight": 1.25
+      "bar_date": "2026-11-10",
+      "updated_at": "2026-11-12T03:16:26+00:00",
+      "weight": 1.123015873015873
     },
     {
       "asset": "ETH",
-      "bar_date": "2026-10-24",
-      "updated_at": "2026-10-26T00:36:20+00:00",
-      "weight": 1.2380952380952381
+      "bar_date": "2026-11-10",
+      "updated_at": "2026-11-12T03:16:26+00:00",
+      "weight": 1.1031746031746033
     },
     {
       "asset": "BNB",
@@ -239,15 +267,15 @@
     },
     {
       "asset": "SOL",
-      "bar_date": "2026-10-22",
-      "updated_at": "2026-10-24T00:58:03+00:00",
-      "weight": 1.2658730158730158
+      "bar_date": "2026-11-10",
+      "updated_at": "2026-11-12T03:16:26+00:00",
+      "weight": 1.1587301587301586
     },
     {
       "asset": "XRP",
-      "bar_date": "2026-11-08",
-      "updated_at": "2026-11-10T04:15:56+00:00",
-      "weight": 1.130952380952381
+      "bar_date": "2026-11-10",
+      "updated_at": "2026-11-12T03:16:26+00:00",
+      "weight": 0.9841269841269842
     },
     {
       "asset": "ADA",
@@ -523,14 +551,14 @@
     },
     {
       "asset": "NVDA",
-      "bars_held": 17,
+      "bars_held": 18,
       "entry_date": "2026-10-19",
       "entry_price": 218.10000610351562,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 9,
-      "last_bar_date": "2026-11-10",
+      "last_bar_date": "2026-11-11",
       "pnl_pct": null,
       "signal_date": "2026-10-16",
       "status": "open"
@@ -579,45 +607,45 @@
     },
     {
       "asset": "MU",
-      "bars_held": 6,
+      "bars_held": 7,
       "entry_date": "2026-11-03",
       "entry_price": 859.9299926757812,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 13,
-      "last_bar_date": "2026-11-10",
+      "last_bar_date": "2026-11-11",
       "pnl_pct": null,
       "signal_date": "2026-11-02",
       "status": "open"
     },
     {
       "asset": "PLTR",
-      "bars_held": 5,
+      "bars_held": 7,
       "entry_date": "2026-11-03",
       "entry_price": 168.17999267578125,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 14,
-      "last_bar_date": "2026-11-09",
+      "last_bar_date": "2026-11-11",
       "pnl_pct": null,
       "signal_date": "2026-11-02",
       "status": "open"
     },
     {
       "asset": "TSM",
-      "bars_held": 6,
+      "bars_held": 7,
       "entry_date": "2026-11-03",
       "entry_price": 404.989990234375,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 15,
-      "last_bar_date": "2026-11-10",
+      "last_bar_date": "2026-11-11",
       "pnl_pct": null,
       "signal_date": "2026-11-02",
-      "status": "open"
+      "status": "pending_exit"
     }
   ],
   "regime_history": [
@@ -1518,6 +1546,15 @@
       "n_equity": 0,
       "n_exits": 0,
       "ran_at": "2026-11-11T02:07:57+00:00",
+      "regime_change": 0
+    },
+    {
+      "dry_run": 0,
+      "id": 99,
+      "n_crypto": 4,
+      "n_equity": 0,
+      "n_exits": 1,
+      "ran_at": "2026-11-12T03:16:30+00:00",
       "regime_change": 0
     }
   ]
