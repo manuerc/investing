@@ -335,6 +335,20 @@
       "id": 48,
       "recorded_at": "2026-11-16T02:20:17+00:00",
       "weight": 0.9007936507936508
+    },
+    {
+      "asset": "BNB",
+      "bar_date": "2026-11-15",
+      "id": 49,
+      "recorded_at": "2026-11-17T04:43:00+00:00",
+      "weight": 0.9007936507936508
+    },
+    {
+      "asset": "XRP",
+      "bar_date": "2026-11-15",
+      "id": 50,
+      "recorded_at": "2026-11-17T04:43:00+00:00",
+      "weight": 0.6984126984126984
     }
   ],
   "crypto_weights": [
@@ -352,9 +366,9 @@
     },
     {
       "asset": "BNB",
-      "bar_date": "2026-11-14",
-      "updated_at": "2026-11-16T02:20:16+00:00",
-      "weight": 0.7261904761904762
+      "bar_date": "2026-11-15",
+      "updated_at": "2026-11-17T04:43:00+00:00",
+      "weight": 0.9007936507936508
     },
     {
       "asset": "SOL",
@@ -364,9 +378,9 @@
     },
     {
       "asset": "XRP",
-      "bar_date": "2026-11-14",
-      "updated_at": "2026-11-16T02:20:16+00:00",
-      "weight": 0.5357142857142857
+      "bar_date": "2026-11-15",
+      "updated_at": "2026-11-17T04:43:00+00:00",
+      "weight": 0.6984126984126984
     },
     {
       "asset": "ADA",
@@ -642,14 +656,14 @@
     },
     {
       "asset": "NVDA",
-      "bars_held": 20,
+      "bars_held": 21,
       "entry_date": "2026-10-19",
       "entry_price": 218.10000610351562,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 9,
-      "last_bar_date": "2026-11-13",
+      "last_bar_date": "2026-11-16",
       "pnl_pct": null,
       "signal_date": "2026-10-16",
       "status": "open"
@@ -698,28 +712,28 @@
     },
     {
       "asset": "MU",
-      "bars_held": 9,
+      "bars_held": 10,
       "entry_date": "2026-11-03",
       "entry_price": 859.9299926757812,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 13,
-      "last_bar_date": "2026-11-13",
+      "last_bar_date": "2026-11-16",
       "pnl_pct": null,
       "signal_date": "2026-11-02",
       "status": "open"
     },
     {
       "asset": "PLTR",
-      "bars_held": 9,
+      "bars_held": 10,
       "entry_date": "2026-11-03",
       "entry_price": 168.17999267578125,
       "exit_date": null,
       "exit_price": null,
       "hold_bars": 63,
       "id": 14,
-      "last_bar_date": "2026-11-13",
+      "last_bar_date": "2026-11-16",
       "pnl_pct": null,
       "signal_date": "2026-11-02",
       "status": "open"
@@ -1682,6 +1696,15 @@
       "n_equity": 0,
       "n_exits": 0,
       "ran_at": "2026-11-16T02:20:21+00:00",
+      "regime_change": 0
+    },
+    {
+      "dry_run": 0,
+      "id": 104,
+      "n_crypto": 2,
+      "n_equity": 0,
+      "n_exits": 0,
+      "ran_at": "2026-11-17T04:43:06+00:00",
       "regime_change": 0
     }
   ]
