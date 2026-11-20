@@ -1,5 +1,5 @@
 {
-  "generado": "2026-11-19T03:46:42+00:00",
+  "generado": "2026-11-20T03:40:18+00:00",
   "nota_metodologica": "Detectar el edge en vivo requiere ~685 operaciones (34 años). Estas métricas NO validan la estrategia: detectan si dejó de comportarse como el backtest. El contraste es contra la distribución del backtest, no contra cero.",
   "acciones": {
     "n_cerradas": 12,
@@ -90,9 +90,9 @@
         "signal_date": "2026-10-16",
         "entry_date": "2026-10-19",
         "entry": 218.10000610351562,
-        "exit": 150.9600067138672,
-        "ret": -0.3078404287516716,
-        "bars_held": 23,
+        "exit": 145.97999572753906,
+        "ret": -0.33067404107153775,
+        "bars_held": 24,
         "estado": "abierta"
       },
       {
@@ -130,9 +130,9 @@
         "signal_date": "2026-11-02",
         "entry_date": "2026-11-03",
         "entry": 859.9299926757812,
-        "exit": 705.27001953125,
-        "ret": -0.17985181870827316,
-        "bars_held": 12,
+        "exit": 690.4400024414062,
+        "ret": -0.19709742848599265,
+        "bars_held": 13,
         "estado": "abierta"
       },
       {
@@ -183,10 +183,10 @@
     }
   },
   "cripto": {
-    "n_ajustes": 51,
+    "n_ajustes": 52,
     "desde": "2026-08-07",
-    "tilt_pct": -0.2072133951044638,
-    "hold_pct": -0.06378233121983168,
+    "tilt_pct": -0.2174819443643745,
+    "hold_pct": -0.07903346187863514,
     "tilt_maxdd": -0.42565379315815366,
     "hold_maxdd": -0.3578730201641305,
     "serie": [
@@ -706,9 +706,14 @@
         "b": -0.04286
       },
       {
-        "d": "2026-11-19",
-        "a": -0.20721,
-        "b": -0.06378
+        "d": "2026-11-18",
+        "a": -0.2079,
+        "b": -0.06473
+      },
+      {
+        "d": "2026-11-20",
+        "a": -0.21748,
+        "b": -0.07903
       }
     ]
   },
@@ -717,10 +722,10 @@
     "desde": "2026-08-07",
     "estado_actual": "RISK_OFF",
     "filtrado_pct": -0.053341388590179784,
-    "spy_pct": -0.053341388590179784,
+    "spy_pct": -0.07191935880788536,
     "filtrado_maxdd": -0.0627527153001376,
-    "spy_maxdd": -0.0627527153001376,
-    "expuesto": 0.9863013698630136,
+    "spy_maxdd": -0.08114599026950398,
+    "expuesto": 0.972972972972973,
     "serie": [
       {
         "d": "2026-08-07",
@@ -1086,6 +1091,11 @@
         "d": "2026-11-18",
         "a": -0.05334,
         "b": -0.05334
+      },
+      {
+        "d": "2026-11-19",
+        "a": -0.05334,
+        "b": -0.07192
       }
     ]
   }
